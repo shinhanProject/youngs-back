@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://[endpoint]:3306/[schema_name]
+    username: [username]
+    password: [password]
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false # osiv
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        ddl-auto: none
+        generate-ddl: false
