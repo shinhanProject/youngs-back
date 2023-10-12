@@ -15,4 +15,5 @@ public class UserDTO {
     private String nickname;
     private String userPw;
     private int age;
+    private String accessToken;
 }
