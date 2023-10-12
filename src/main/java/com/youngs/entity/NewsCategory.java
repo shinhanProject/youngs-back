@@ -2,15 +2,18 @@ package com.youngs.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name ="news_category")
+@EntityListeners(AuditingEntityListener.class)
 public class NewsCategory {
     @Id
     @Column(name = "category_seq")
@@ -21,6 +24,6 @@ public class NewsCategory {
     private String categoryName; //보도자료 카테고리 명
 
     @CreatedDate
-    @Column(name="created_at", nullable = false)
+    @Column(name="created_at")
     private LocalDateTime createdAt; //생성일
 }

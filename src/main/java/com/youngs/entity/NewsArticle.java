@@ -2,15 +2,18 @@ package com.youngs.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
-@Getter
-@Setter
+@Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name ="news_article")
+@EntityListeners(AuditingEntityListener.class)
 public class NewsArticle {
     @Id
     @Column(name = "news_seq")
@@ -24,9 +27,15 @@ public class NewsArticle {
     private String url; //세부 보도자료 URL
 
     @Column(nullable = false)
+    private String description; //보도자료 요약
+
+    @Column(name="pub_date",nullable = false)
+    private Date pubDate;
+
+    @Column(nullable = false)
     private Long categorySeq; //보도자료 카테고리 인덱스
 
     @CreatedDate
-    @Column(name="created_at", nullable = false)
+    @Column(name="created_at")
     private LocalDateTime createdAt; //생성일
 }
