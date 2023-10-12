@@ -1,6 +1,8 @@
 package com.youngs.controller;
 
 import com.youngs.dto.ResponseDTO;
+import com.youngs.dto.UserDTO;
+import com.youngs.entity.User;
 import com.youngs.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,45 @@ public class AuthController {
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .message("이메일이 중복됩니다.")
                     .build();
+
+            return ResponseEntity
+                    .internalServerError() // Error 500
+                    .body(responseDTO);
+        }
+    }
+
+    /**
+     * 회원 가입 메서드
+     * @author : 박상희
+     * @param userDTO : 사용자가 입력한 사용자 회원 가입 정보
+     * @return ResponseEntity
+     **/
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+        try {
+            // 요청을 이용해 저장할 사용자 만들기
+            User user = User.builder()
+                    .email(userDTO.getEmail()) // 사용자 이메일
+                    .nickname(userDTO.getNickname()) // 사용자 닉네임
+                    .userPw(userDTO.getUserPw()) // 사용자 비밀번호
+                    .age(userDTO.getAge()) // 사용자 나이
+                    .build();
+
+            // 서비스를 이용해 리포지터리에 사용자 저장
+            User registeredUser = authService.create(user);
+
+            UserDTO responseUserDTO = UserDTO.builder()
+                    .userSeq(registeredUser.getUserSeq()) // 사용자 고유 번호
+                    .email(registeredUser.getEmail()) // 사용자 이메일
+                    .nickname(registeredUser.getNickname()) // 사용자 닉네임
+                    .age(userDTO.getAge()) // 사용자 나이
+                    .build();
+
+            // 사용자 정보는 항상 하나이므로 리스트로 만들어야 하는 ResponseDTO를 사용하지 않고 그냥 UserDTO 리턴
+            return ResponseEntity.ok().body(responseUserDTO);
+        }
+        catch (Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
 
             return ResponseEntity
                     .internalServerError() // Error 500
