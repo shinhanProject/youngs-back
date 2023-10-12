@@ -88,4 +88,37 @@ public class AuthController {
                     .body(responseDTO);
         }
     }
+
+    /**
+     * 로그인 메서드
+     * @author : 박상희
+     * @param userDTO : 사용자가 입력한 사용자 로그인 정보
+     * @return ResponseEntity
+     **/
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
+        User user = authService.getByCredentials(
+                userDTO.getEmail(),
+                userDTO.getUserPw());
+
+        if(user != null) {
+            final UserDTO responseUserDTO = UserDTO.builder()
+                    .userSeq(user.getUserSeq())
+                    .email(user.getEmail())
+                    .nickname(user.getNickname())
+                    .age(user.getAge())
+                    .build();
+
+            return ResponseEntity.ok().body(responseUserDTO);
+        }
+        else {
+            ResponseDTO responseDTO = ResponseDTO.builder()
+                    .message("로그인에 실패했습니다.")
+                    .build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
+    }
 }

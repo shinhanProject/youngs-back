@@ -49,4 +49,16 @@ public class AuthServiceImpl implements AuthService {
 
         return userRepository.save(user);
     }
+
+    /**
+     * 사용자 이메일과 사용자 비밀번호를 이용해서 사용자를 검색하는 메서드
+     * @author : 박상희
+     * @param email : 사용자 이메일
+     * @param userPw : 사용자 비밀번호
+     * @return 검색된 사용자 객체
+     */
+    @Override
+    public User getByCredentials(final String email, final String userPw) {
+        return userRepository.findByEmailAndUserPw(email, userPw);
+    }
 }
