@@ -15,4 +15,6 @@ public interface NewsRepository extends JpaRepository<NewsArticle, Integer> {
      * */
     @Query(value = "select n from NewsArticle n where n.categorySeq=?1")
     List<NewsArticle> selectByCategorySeq(Long categorySeq);
+
+    NewsArticle findByCategorySeqAndNewsSeq(Long categorySeq, Long newsSeq);
 }
