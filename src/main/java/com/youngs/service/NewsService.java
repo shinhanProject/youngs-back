@@ -1,6 +1,8 @@
 package com.youngs.service;
 
 import com.youngs.dto.NewsArticleDTO;
+import com.youngs.entity.NewsArticle;
+
 import java.util.List;
 
 public interface NewsService {
@@ -11,4 +13,9 @@ public interface NewsService {
      * @param categorySeq 보도자료 카테고리 인덱스. 1: 경제, 2: 증권, 3: 부동산
      * */
     List<NewsArticleDTO> selectByCategorySeq(Long categorySeq);
+
+    /**
+     * 세부 보도자료 조회
+     * */
+    NewsArticle getByArticle(Long categorySeq, Long newsSeq);
 }
