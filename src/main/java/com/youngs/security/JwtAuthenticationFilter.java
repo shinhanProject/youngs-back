@@ -1,14 +1,12 @@
 package com.youngs.security;
 
-import com.youngs.entity.User;
-import com.youngs.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -20,6 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * HTTP 요청을 필터링하고, JWT를 사용하여 사용자 인증을 처리하는 JWT 인증 필터
+ * JWT를 사용하여 사용자를 인증하고, SecurityContext에 사용자 인증 정보를 저장하여 요청 처리 중 사용자를 식별한다.
+ * @author : 박상희
+ **/
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -27,8 +30,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private TokenProvider tokenProvider;
 
     @Autowired
-    private UserRepository userRepo;
+    private PrincipalUserDetailsService principalUserDetailsService;
 
+    /**
+     * HTTP 요청 필터링 및 JWT 기반 사용자 인증 처리 메서드
+     * @author : 박상희
+     * @param request : HTTP 요청
+     * @param response : HTTP 응답
+     * @param filterChain : 다음 필터로 요청을 전달하는 데 사용되는 FilterChain
+     * @throws ServletException : ServletException 예외 처리
+     * @throws IOException : IOException 예외 처리
+     **/
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -38,19 +50,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("Filter is running...");
 
             // 토큰 검사하기 // JWT이므로 인가 서버에 요청하지 않고도 검증 가능
-            if(token != null && !token.equalsIgnoreCase("null")) {
+            if (token != null && !token.equalsIgnoreCase("null")) {
                 // email 가져오기 // 위조된 경우 예외 처리된다.
                 String email = tokenProvider.validateAndGetEmail(token);
                 log.info("Authenticated email : " + email);
 
                 // email을 통해 user 정보 가져오기
-                User user = userRepo.findByEmail(email);
+                UserDetails userDetails = principalUserDetailsService.loadUserByUsername(email);
 
                 // 인증 완료 // SecurityContextHolder에 등록해야 인증된 사용자라고 생각한다.
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        user, // 인증된 사용자의 정보
+                        userDetails, // 인증된 사용자의 정보
                         null,
-                        AuthorityUtils.NO_AUTHORITIES
+                        userDetails.getAuthorities()
                 );
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -66,6 +78,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * HTTP 요청에서 Bearer 토큰을 파싱하는 메서드
+     * @author : 박상희
+     * @param request : HTTP 요청
+     * @return Bearer 토큰 (토큰을 찾을 수 없을 경우, null 반환)
+     **/
     private String parseBearerToken(HttpServletRequest request) {
         // Http 요청의 헤더를 파싱해 Bearer 토큰을 리턴한다.
         String bearerToken = request.getHeader("Authorization");

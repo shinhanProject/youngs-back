@@ -3,11 +3,13 @@ package com.youngs.controller;
 import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserDTO;
 import com.youngs.entity.User;
+import com.youngs.security.PrincipalUserDetailsService;
 import com.youngs.security.TokenProvider;
 import com.youngs.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
+    private final PrincipalUserDetailsService principalUserDetailsService;
+
     private final AuthService authService;
 
     private final TokenProvider tokenProvider;
@@ -105,14 +109,12 @@ public class AuthController {
                 userDTO.getUserPw());
 
         if(user != null) {
+            UserDetails principalUserDetails = principalUserDetailsService.loadUserByUsername(user.getEmail());
+
             // 토큰 생성
-            final String accessToken = tokenProvider.create(user);
+            final String accessToken = tokenProvider.create(principalUserDetails);
 
             final UserDTO responseUserDTO = UserDTO.builder()
-                    .userSeq(user.getUserSeq())
-                    .email(user.getEmail())
-                    .nickname(user.getNickname())
-                    .age(user.getAge())
                     .accessToken(accessToken)
                     .build();
 
