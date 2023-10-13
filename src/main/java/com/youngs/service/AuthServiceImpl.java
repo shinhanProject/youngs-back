@@ -4,6 +4,7 @@ import com.youngs.entity.User;
 import com.youngs.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +57,13 @@ public class AuthServiceImpl implements AuthService {
      * @return 검색된 사용자 객체
      */
     @Override
-    public User getByCredentials(final String email, final String userPw) {
-        return userRepository.findByEmailAndUserPw(email, userPw);
+    public User getByCredentials(final String email, final String userPw, final PasswordEncoder encoder) {
+        final User originalUser = userRepository.findByEmail(email).orElse(null);
+
+        if (originalUser != null && encoder.matches(userPw, originalUser.getUserPw())) {
+            return originalUser;
+        }
+
+        return null;
     }
 }

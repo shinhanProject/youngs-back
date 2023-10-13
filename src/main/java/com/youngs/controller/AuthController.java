@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,8 @@ public class AuthController {
     private final AuthService authService;
 
     private final TokenProvider tokenProvider;
+
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /**
      * 사용자가 입력한 사용자 이메일이 존재하는지 체크하는 메서드
@@ -70,7 +74,7 @@ public class AuthController {
             User user = User.builder()
                     .email(userDTO.getEmail()) // 사용자 이메일
                     .nickname(userDTO.getNickname()) // 사용자 닉네임
-                    .userPw(userDTO.getUserPw()) // 사용자 비밀번호
+                    .userPw(passwordEncoder.encode(userDTO.getUserPw())) // 사용자 비밀번호
                     .age(userDTO.getAge()) // 사용자 나이
                     .build();
 
@@ -104,7 +108,8 @@ public class AuthController {
     public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
         User user = authService.getByCredentials(
                 userDTO.getEmail(),
-                userDTO.getUserPw());
+                userDTO.getUserPw(),
+                passwordEncoder);
 
         if(user != null) {
             UserDetails principalUserDetails = principalUserDetailsService.loadUserByUsername(user.getEmail());
