@@ -40,8 +40,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         final String email = user.getEmail();
-        System.out.println(email);
-        System.out.println(checkEmail(email));
         if (!checkEmail(email)) {
             log.warn("이메일이 이미 존재합니다. {}", email);
             throw new RuntimeException("이메일이 이미 존재합니다.");

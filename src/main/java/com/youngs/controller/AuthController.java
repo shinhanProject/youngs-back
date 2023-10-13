@@ -77,18 +77,16 @@ public class AuthController {
             // 서비스를 이용해 리포지터리에 사용자 저장
             User registeredUser = authService.create(user);
 
-            UserDTO responseUserDTO = UserDTO.builder()
-                    .userSeq(registeredUser.getUserSeq()) // 사용자 고유 번호
-                    .email(registeredUser.getEmail()) // 사용자 이메일
-                    .nickname(registeredUser.getNickname()) // 사용자 닉네임
-                    .age(userDTO.getAge()) // 사용자 나이
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .message(registeredUser.getEmail() + " 회원 가입에 성공했습니다.")
                     .build();
 
-            // 사용자 정보는 항상 하나이므로 리스트로 만들어야 하는 ResponseDTO를 사용하지 않고 그냥 UserDTO 리턴
-            return ResponseEntity.ok().body(responseUserDTO);
+            return ResponseEntity.ok().body(responseDTO);
         }
         catch (Exception e) {
-            ResponseDTO responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .message("회원 가입에 실패했습니다. " + e.getMessage())
+                    .build();
 
             return ResponseEntity
                     .internalServerError() // Error 500
@@ -121,7 +119,7 @@ public class AuthController {
             return ResponseEntity.ok().body(responseUserDTO);
         }
         else {
-            ResponseDTO responseDTO = ResponseDTO.builder()
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .message("로그인에 실패했습니다.")
                     .build();
 
