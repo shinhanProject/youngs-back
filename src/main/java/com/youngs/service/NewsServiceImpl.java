@@ -27,7 +27,7 @@ public class NewsServiceImpl implements NewsService {
      * */
     @Override
     public List<NewsArticleDTO> selectByCategorySeq(Long categorySeq) throws RuntimeException {
-        List<NewsArticle> newsList = newsRep.selectByCategorySeq(categorySeq);
+        List<NewsArticle> newsList = newsRep.findByCategorySeq(categorySeq);
         if(newsList.isEmpty()){ //가져온 보도자료가 없다면
             throw new RuntimeException("조회할 보도자료가 없습니다");
         }
