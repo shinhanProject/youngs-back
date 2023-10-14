@@ -30,10 +30,11 @@ public class NewsArticle {
     private String description; //보도자료 요약
 
     @Column(name="pub_date",nullable = false)
-    private Date pubDate;
+    private LocalDateTime pubDate;
 
-    @Column(nullable = false)
-    private Long categorySeq; //보도자료 카테고리 인덱스
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_seq")
+    private NewsCategory newsCategory; //보도자료 카테고리 인덱스
 
     @CreatedDate
     @Column(name="created_at")
