@@ -15,6 +15,15 @@ public interface MyPageService {
     UserProfileDTO searchUserByUserSeq(Long userSeq);
 
     /**
+     * 사용자 프로필 변경 - 프로필 이미지 및 닉네임
+     * @author 이지은
+     * @param userSeq 사용자 인덱스
+     * @param profile 사용자 프로필
+     * @param nickname 사용자 닉네임
+     * */
+    void changeProfile(Long userSeq, String profile, String nickname);
+
+    /**
      *  모래사장 조회
      * @author 이지은
      * @param userSeq 사용자 인덱스
