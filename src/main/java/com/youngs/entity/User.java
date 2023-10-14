@@ -10,6 +10,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * 사용자 정보를 나타내는 엔티티 클래스
+ * @author : 박상희
+ **/
 @Data
 @Entity
 @Builder
@@ -47,14 +51,17 @@ public class User {
     @Column(name = "is_private", nullable = false)
     private int isPrivate; // 사용자 요약 정보 공개 여부
 
+    @Column(name = "refresh_token")
+    private String refreshToken; // 사용자 Refresh Token
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt; // 사용자 계정 생성 날짜
 
     @PrePersist // 엔티티 객체가 영구 저장소에 저장되기 전에 실행해야 하는 메서드를 지정하는 어노테이션
     public void prePersist(){
-        this.profile = this.profile == null ? "SOL" : this.profile;
-        this.point = this.point == null ? 0 : this.point;
-        this.tier = this.tier == null ? "주식 왕초보" : this.tier;
+        this.profile = this.profile == null ? "SOL" : this.profile; // 사용자 프로필 이미지 이름 기본 설정
+        this.point = this.point == null ? 0 : this.point; // 사용자 점수 기본 설정
+        this.tier = this.tier == null ? "주식 왕초보" : this.tier; // 사용자 티어 기본 설정
     }
 }
