@@ -2,6 +2,7 @@ package com.youngs.controller;
 
 import com.youngs.dto.FollowingDTO;
 import com.youngs.dto.ResponseDTO;
+import com.youngs.dto.UserProfileDTO;
 import com.youngs.dto.UserSandDTO;
 import com.youngs.service.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,26 @@ import java.util.List;
 @RequestMapping("/profile")
 public class MyPageController {
     private final MyPageService myPageService;
+
+    /**
+     * 사용자 프로필 정보 조회
+     * @author 이지은
+     * @param userSeq 사용자 인덱스
+     * @return 사용자 프로필 정보
+     * */
+    @GetMapping("/{userSeq}")
+    public ResponseEntity<?> searchProfile(@PathVariable Long userSeq){
+        try{
+            //사용자 인덱스에 해당하는 프로필 정보 조회
+            UserProfileDTO userProfile = myPageService.searchUserByUserSeq(userSeq);
+            return ResponseEntity.ok().body(userProfile);
+        } catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // 500
+                    .body(responseDTO);
+        }
+    }
 
     /**
      * 모래사장 조회 API

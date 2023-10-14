@@ -1,6 +1,7 @@
 package com.youngs.service;
 
 import com.youngs.dto.FollowingDTO;
+import com.youngs.dto.UserProfileDTO;
 import com.youngs.dto.UserSandDTO;
 import com.youngs.entity.Following;
 import com.youngs.entity.User;
@@ -23,6 +24,25 @@ public class MyPageServiceImpl implements  MyPageService{
     private final UserSandRepository userSandRep;
     private final FollowingRepository followingRep;
     private final UserRepository userRep;
+
+    /**
+     * 사용자 프로필 정보 조회
+     * @author 이지은
+     * @param userSeq 사용자 인덱스
+     * @exception RuntimeException 유저 정보가 존재하지 않을 떼
+     * @return 사용자 프로필 정보
+     * */
+    @Override
+    public UserProfileDTO searchUserByUserSeq(Long userSeq){
+        User user = userRep.findByUserSeq(userSeq);
+        if(user == null){ //인덱스에 해당하는 유저가 없다면
+            throw new RuntimeException("조회할 유저 정보가 없습니다.");
+        }
+
+        int count = userSandRep.getByCountAndUserUserSeq(userSeq); //누적 조개 수
+        UserProfileDTO userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count);
+        return userProfile;
+    }
 
     /**
      * 모래사장 조회
