@@ -65,7 +65,8 @@ public class AuthController {
      * 회원 가입 메서드
      * @author : 박상희
      * @param userDTO : 사용자가 입력한 사용자 회원 가입 정보
-     * @return ResponseEntity
+     * @return - 회원 가입 성공 시 : 200
+     * @return - 회원 가입 실패 시 : 500
      **/
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
@@ -102,7 +103,8 @@ public class AuthController {
      * 로그인 메서드
      * @author : 박상희
      * @param userDTO : 사용자가 입력한 사용자 로그인 정보
-     * @return ResponseEntity
+     * @return - 로그인 성공 시 : 200, Access Token과 Refresh Token
+     * @return - 로그인 실패 시 : 500
      **/
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
@@ -115,10 +117,13 @@ public class AuthController {
             UserDetails principalUserDetails = principalUserDetailsService.loadUserByUsername(user.getEmail());
 
             // 토큰 생성
-            final String accessToken = tokenProvider.create(principalUserDetails);
+            final String accessToken = tokenProvider.createAccessToken(principalUserDetails);
+            final String refreshToken = tokenProvider.createRefreshToken();
 
+            user.setRefreshToken(refreshToken); // 사용자 Refresh Token DB에 설정
             final UserDTO responseUserDTO = UserDTO.builder()
                     .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .build();
 
             return ResponseEntity.ok().body(responseUserDTO);
@@ -132,5 +137,17 @@ public class AuthController {
                     .internalServerError()
                     .body(responseDTO);
         }
+    }
+
+    /**
+     * 토큰 재발급 메서드
+     * @author : 박상희
+     * @param userDTO : 사용자 이메일과 사용자 Refresh Token이 포함된 사용자 정보
+     * @return - 토큰 재발급 성공 시 : 200, Access Token과 Refresh Token
+     * @return - 토큰 재발급 실패 시 : 유효하지 않은 Refresh Token일 경우 400, 사용자 이메일 정보가 유효하지 않을 경우 500
+     */
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissueToken(@RequestBody UserDTO userDTO) {
+        return authService.reissueToken(userDTO.getEmail(), userDTO.getRefreshToken());
     }
 }

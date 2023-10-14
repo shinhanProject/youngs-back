@@ -45,14 +45,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            // 요청에서 토큰 가져오기
-            String token = parseBearerToken(request);
+            // 요청에서 Access Token 가져오기
+            String accessToken = parseBearerToken(request);
             log.info("Filter is running...");
 
-            // 토큰 검사하기 // JWT이므로 인가 서버에 요청하지 않고도 검증 가능
-            if (token != null && !token.equalsIgnoreCase("null")) {
+            // Access Token 검사하기 // JWT이므로 인가 서버에 요청하지 않고도 검증 가능
+            if (accessToken != null && !accessToken.equalsIgnoreCase("null") && tokenProvider.validateToken(accessToken, "AccessToken")) {
                 // email 가져오기 // 위조된 경우 예외 처리된다.
-                String email = tokenProvider.validateAndGetEmail(token);
+                String email = tokenProvider.validateAndGetEmail(accessToken, "AccessToken");
                 log.info("Authenticated email : " + email);
 
                 // email을 통해 user 정보 가져오기
