@@ -4,6 +4,8 @@ import com.youngs.entity.Following;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface FollowingRepository extends JpaRepository<Following, Integer> {
     /**
      * 팔로우 대상(타겟)을 팔로우 중인 지 조회
@@ -13,4 +15,6 @@ public interface FollowingRepository extends JpaRepository<Following, Integer> {
      * */
     @Query(value = "select f from Following f where f.follower.userSeq =?1 and f.following.userSeq=?2")
     Following findByFollowerAndAndFollowing(Long userSeq, Long targetUserSeq);
+
+    List<Following> findAllByFollowerUserSeq(Long userSeq);
 }
