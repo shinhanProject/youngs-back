@@ -58,4 +58,24 @@ public class MyPageController {
         }
     }
 
+    /**
+     * 팔로워 목록 조회 API
+     * @author 이지은
+     * @param userSeq 조회할 사용자 인덱스
+     * @return 팔로잉 리스트
+     * */
+    @GetMapping("/{userSeq}/follower")
+    public ResponseEntity<?> searchFollower(@PathVariable Long userSeq){
+        try{
+            //사용자 인덱스에 해당하는 팔로워 목록 조회
+            List<FollowingDTO> followingDTOList = myPageService.sarchFollowerList(userSeq);
+            return ResponseEntity.ok().body(followingDTOList);
+        } catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // 500
+                    .body(responseDTO);
+        }
+    }
+
 }
