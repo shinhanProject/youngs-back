@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,9 +46,15 @@ public class NewsController {
     @GetMapping()
     public ResponseEntity<?> searchArticle(@RequestParam Long categorySeq, Long newsSeq){
         try{
+            Map<String, Object> response = new HashMap<>();
             // 해당하는 세부 보도자료가 있는 지 조회
             NewsArticle newsArticle = newsService.getByArticle(categorySeq, newsSeq);
-            return ResponseEntity.ok().body(newsArticle);
+
+            //전달할 값
+            response.put("news_seq", newsArticle.getNewsSeq());
+            response.put("title", newsArticle.getTitle());
+            response.put("url", newsArticle.getUrl());
+            return ResponseEntity.ok().body(response);
         } catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
             return ResponseEntity

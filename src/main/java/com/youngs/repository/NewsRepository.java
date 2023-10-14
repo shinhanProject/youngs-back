@@ -12,7 +12,7 @@ public interface NewsRepository extends JpaRepository<NewsArticle, Integer> {
      * @author 이지은
      * @param categorySeq 보도자료 카테고리 인덱스. 1: 경제, 2: 증권, 3: 부동산
      * */
-    List<NewsArticle> findByCategorySeq(Long categorySeq);
+    List<NewsArticle> findAllByNewsCategoryCategorySeq(Long categorySeq);
 
-    NewsArticle findByCategorySeqAndNewsSeq(Long categorySeq, Long newsSeq);
+    NewsArticle findByNewsCategoryCategorySeqAndNewsSeq(Long categorySeq, Long newsSeq);
 }
