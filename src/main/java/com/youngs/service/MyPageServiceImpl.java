@@ -6,6 +6,7 @@ import com.youngs.dto.UserSandDTO;
 import com.youngs.entity.Following;
 import com.youngs.entity.User;
 import com.youngs.entity.UserSand;
+import com.youngs.exception.NoChangeException;
 import com.youngs.repository.FollowingRepository;
 import com.youngs.repository.UserRepository;
 import com.youngs.repository.UserSandRepository;
@@ -33,15 +34,41 @@ public class MyPageServiceImpl implements  MyPageService{
      * @return 사용자 프로필 정보
      * */
     @Override
-    public UserProfileDTO searchUserByUserSeq(Long userSeq){
+    public UserProfileDTO searchUserByUserSeq(Long userSeq) throws RuntimeException {
         User user = userRep.findByUserSeq(userSeq);
         if(user == null){ //인덱스에 해당하는 유저가 없다면
             throw new RuntimeException("조회할 유저 정보가 없습니다.");
         }
 
-        int count = userSandRep.getByCountAndUserUserSeq(userSeq); //누적 조개 수
+        int count = userSandRep.getByCountAndUserUserSeq(userSeq) ; //누적 조개 수
         UserProfileDTO userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count);
         return userProfile;
+    }
+
+    /**
+     * 사용자 프로필 변경 - 프로필 이미지 및 닉네임
+     * @author 이지은
+     * @param userSeq 사용자 인덱스
+     * @param profile 사용자 프로필
+     * @param nickname 사용자 닉네임
+     * @exception RuntimeException 사용자가 존재 하지 않을 떼
+     * @exception RuntimeException 변경된 사항이 없을 떼
+     * */
+    @Override
+    public void changeProfile(Long userSeq, String profile, String nickname) throws RuntimeException {
+        User user = userRep.findByUserSeq(userSeq);
+        if(user == null){
+            throw new RuntimeException("사용자가 존재 하지 않습니다.");
+        }
+
+        //프로필 이미지와 닉네임에 변화가 없다면
+        if(user.getProfile().equals(profile) && user.getNickname().equals(nickname)){
+            throw new NoChangeException("프로필 변경 사항이 없습니다.");
+        }
+
+        user.setProfile(profile);
+        user.setNickname(nickname);
+        userRep.save(user); //변경한 프로필 및 닉네임 저장
     }
 
     /**
