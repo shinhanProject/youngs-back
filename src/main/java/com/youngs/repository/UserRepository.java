@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByEmailAndUserPw(String email, String userPw);
 
+    User findByUserSeq(Long userSeq);
+
     /**
      * point를 기준으로 내림차순 조회
      * @author 이지은
