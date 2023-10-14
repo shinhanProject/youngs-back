@@ -10,4 +10,6 @@ public class NewsArticleDTO {
     private Long newsSeq; //세부 보도자료 인덱스
     private String title; //보도자료 제목
     private String url; //보도자료 URL
+    private String description; //보도자료 요약
+    private String pubDate; //보도자료 게시일
 }
