@@ -21,4 +21,11 @@ public interface MyPageService {
      * @param userSeq 사용자 인덱스
      * */
     List<FollowingDTO> sarchFollowingList(Long userSeq);
+
+    /**
+     * 팔로워 목록 조회
+     * @author 이지은
+     * @param userSeq 사용자 인덱스
+     * */
+    List<FollowingDTO> sarchFollowerList(Long userSeq);
 }

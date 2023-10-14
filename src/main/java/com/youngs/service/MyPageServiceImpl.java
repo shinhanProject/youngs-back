@@ -61,7 +61,6 @@ public class MyPageServiceImpl implements  MyPageService{
         }
         List<FollowingDTO> followingDTOList = new ArrayList<>();
         for(Following f : followingList){
-            System.out.println("f: " + f);
             //팔로우 리스트로 불러온 사용자의 정보 조회
             User user = userRep.findByUserSeq(f.getFollowing().getUserSeq());
 
@@ -79,4 +78,35 @@ public class MyPageServiceImpl implements  MyPageService{
         return followingDTOList;
     }
 
+    /**
+     * 팔로워 조회
+     * @author 이지은
+     * @param userSeq 사용자 인덱스
+     * @exception RuntimeException 가져온 팔로워 목록 정보가 없다면 throw
+     * @return 팔로워 목록
+     * */
+    @Override
+    public List<FollowingDTO> sarchFollowerList(Long userSeq){
+        List<Following> followerList = followingRep.findAllByFollowingUserSeq(userSeq);
+        if(followerList.isEmpty()){
+            throw new RuntimeException("조회할 팔로워 목록이 없습니다.");
+        }
+        List<FollowingDTO> followerDTOList = new ArrayList<>();
+        for(Following f : followerList){
+            //팔로우 리스트로 불러온 사용자의 정보 조회
+            User user = userRep.findByUserSeq(f.getFollower().getUserSeq());
+
+            int status = 0; //default: 자기 자신일 때
+            if(userSeq != null) { //로그인을 한 유저일 때
+                if (!userSeq.equals(user.getUserSeq())) { //클릭한 타겟이 본인이 아닐 때
+                    Following following = followingRep.findByFollowerAndAndFollowing(userSeq, user.getUserSeq());
+                    status = (following != null ? 2 : 1); //팔로잉 중이라면 2, 아니라면 1
+                }
+            } else { //로그인을 하지 않은 유저일 때
+                status = 1;
+            }
+            followerDTOList.add(new FollowingDTO(user.getNickname(), user.getProfile(), status));
+        }
+        return followerDTOList;
+    }
 }
