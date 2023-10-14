@@ -52,6 +52,7 @@ public class TokenProvider {
 
     /**
      * Access Token을 생성하는 메서드
+     * @author : 박상희
      * @param userDetails : 사용자 정보
      * @return 생성된 Access Token
      **/
@@ -66,9 +67,10 @@ public class TokenProvider {
 
     /**
      * Refresh Token을 생성하는 메서드
+     * @author : 박상희
      * @return 생성된 Refresh Token
      **/
-    public String createRefreshToken() { //UserDetails userDetails) {
+    public String createRefreshToken() {
         long refreshTokenExpiryTime = REFRESH_TOKEN_VALIDITY_SECONDS * 1000;
 
         // 보통 Refresh Token은 Access Token과 달리 Subject, Claim과 같은 회원 정보를 담고 있지 않는다.
@@ -77,6 +79,7 @@ public class TokenProvider {
 
     /**
      * 토큰의 유효성을 검사하는 메서드
+     * @author : 박상희
      * @param token : JWT
      * @param secretKeyType : 토큰의 종류 (AccessToken 또는 RefreshToken)
      * @return 토큰의 유효성 여부
