@@ -111,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
         // Refresh Token이 유효할 경우
         UserDetails userDetails = principalUserDetailsService.loadUserByUsername(email); // 사용자 이메일 기준으로 사용자 인증 정보 가져오기
         String newAccessToken = tokenProvider.createAccessToken(userDetails); // 새로운 Access Token 생성
-        String newRefreshToken = tokenProvider.createAccessToken(userDetails); // 새로운 Refresh Token 생성
+        String newRefreshToken = tokenProvider.createRefreshToken(); // 새로운 Refresh Token 생성
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("회원 정보를 찾지 못했습니다."));
         user.setRefreshToken(newRefreshToken); // 새로운 Refresh Token DB에 저장
