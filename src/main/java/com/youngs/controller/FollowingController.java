@@ -27,10 +27,10 @@ public class FollowingController {
      **/
     @PostMapping("/follow")
     public ResponseEntity<?> addFollowing(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @RequestBody Map<String, Long> request) {
-        Long userSeq = currentUserDetails.getUserSeq(); // 로그인한 사용자의 고유 번호
+        Long currentUserSeq = currentUserDetails.getUserSeq(); // 로그인한 사용자의 고유 번호
         Long targetUserSeq = request.get("targetUserSeq");  // 팔로우할 사용자의 고유 번호
 
-        return followingService.saveFollowing(userSeq, targetUserSeq);
+        return followingService.saveFollowing(currentUserSeq, targetUserSeq);
     }
 
     /**
@@ -44,24 +44,9 @@ public class FollowingController {
      */
     @DeleteMapping("/unfollow")
     public ResponseEntity<?> deleteFollowing(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @RequestBody Map<String, Long> request) {
-        try {
-            Long userSeq = currentUserDetails.getUserSeq(); // 로그인한 사용자의 고유 번호
-            Long targetUserSeq = request.get("targetUserSeq"); // 언팔로우할 사용자의 고유 번호
+        Long currentUserSeq = currentUserDetails.getUserSeq(); // 로그인한 사용자의 고유 번호
+        Long targetUserSeq = request.get("targetUserSeq"); // 언팔로우할 사용자의 고유 번호
 
-            if (!userSeq.equals(targetUserSeq)) { // 로그인한 사용자와 언팔로우 대상자가 다를 경우
-                followingService.deleteFollowing(userSeq, targetUserSeq);
-            }
-            else {
-                throw new RuntimeException("언팔로우 대상자가 아닌 본인입니다.");
-            }
-
-            return ResponseEntity.ok().body("언팔로우에 성공했습니다.");
-        }
-        catch (Exception e) {
-            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
-            return ResponseEntity
-                    .internalServerError() // 500
-                    .body(responseDTO);
-        }
+        return followingService.deleteFollowing(currentUserSeq, targetUserSeq);
     }
 }
