@@ -27,26 +27,10 @@ public class FollowingController {
      **/
     @PostMapping("/follow")
     public ResponseEntity<?> addFollowing(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @RequestBody Map<String, Long> request){
-        try {
-            Long userSeq = currentUserDetails.getUserSeq(); // 로그인한 사용자의 고유 번호
-            Long targetUserSeq = request.get("targetUserSeq"); // 팔로우할 사용자
+        Long userSeq = currentUserDetails.getUserSeq(); // 로그인한 사용자의 고유 번호
+        Long targetUserSeq = request.get("targetUserSeq");  // 팔로우할 사용자의 고유 번호
 
-            if (!userSeq.equals(targetUserSeq)) { // 로그인한 사용자와 팔로우 대상자가 다를 경우
-                followingService.saveFollowing(userSeq, targetUserSeq);
-            }
-            else{
-                throw new RuntimeException("팔로우 대상자가 아닙니다.");
-            }
-
-            return ResponseEntity.ok().body("팔로우에 성공했습니다.");
-        }
-        catch (Exception e){
-            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message("팔로우에 실패했습니다. " + e.getMessage()).build();
-
-            return ResponseEntity
-                    .internalServerError() // 500
-                    .body(responseDTO);
-        }
+        return followingService.saveFollowing(userSeq, targetUserSeq);
     }
 
     /**
