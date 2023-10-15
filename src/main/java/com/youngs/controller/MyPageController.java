@@ -5,10 +5,12 @@ import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserProfileDTO;
 import com.youngs.dto.UserSandDTO;
 import com.youngs.exception.NoChangeException;
+import com.youngs.security.PrincipalUserDetails;
 import com.youngs.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,16 +23,18 @@ public class MyPageController {
     private final MyPageService myPageService;
 
     /**
-     * 사용자 프로필 정보 조회
-     * @author 이지은
-     * @param userSeq 사용자 인덱스
+     * 사용자 프로필 정보 조회하는 메서드
+     * @author : 박상희, 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq : 조회할 사용자 고유 번호
      * @return 사용자 프로필 정보
-     * */
+     **/
     @GetMapping("/{userSeq}")
-    public ResponseEntity<?> searchProfile(@PathVariable Long userSeq){
-        try{
-            //사용자 인덱스에 해당하는 프로필 정보 조회
-            UserProfileDTO userProfile = myPageService.searchUserByUserSeq(userSeq);
+    public ResponseEntity<?> searchProfileByUser(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @PathVariable Long userSeq){
+        try {
+            // 사용자 인덱스에 해당하는 프로필 정보 조회
+            UserProfileDTO userProfile = myPageService.searchUserByUserSeq(currentUserDetails, userSeq);
+
             return ResponseEntity.ok().body(userProfile);
         } catch (Exception e){
             ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();

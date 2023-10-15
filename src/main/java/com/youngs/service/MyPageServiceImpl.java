@@ -10,6 +10,7 @@ import com.youngs.exception.NoChangeException;
 import com.youngs.repository.FollowingRepository;
 import com.youngs.repository.UserRepository;
 import com.youngs.repository.UserSandRepository;
+import com.youngs.security.PrincipalUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,21 +28,37 @@ public class MyPageServiceImpl implements  MyPageService{
     private final UserRepository userRep;
 
     /**
-     * 사용자 프로필 정보 조회
-     * @author 이지은
-     * @param userSeq 사용자 인덱스
-     * @exception RuntimeException 유저 정보가 존재하지 않을 떼
+     * 사용자 프로필 조회
+     * @author : 박상희, 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq : 조회할 사용자 고유 번호
      * @return 사용자 프로필 정보
-     * */
+     * @throws RuntimeException
+     */
     @Override
-    public UserProfileDTO searchUserByUserSeq(Long userSeq) throws RuntimeException {
-        User user = userRep.findByUserSeq(userSeq);
-        if(user == null){ //인덱스에 해당하는 유저가 없다면
+    public UserProfileDTO searchUserByUserSeq(PrincipalUserDetails currentUserDetails, Long userSeq) throws RuntimeException {
+        User user = userRep.findByUserSeq(userSeq); // 조회하려는 사용자 정보
+        if (user == null){ // 인덱스에 해당하는 유저가 없다면
             throw new RuntimeException("조회할 유저 정보가 없습니다.");
         }
 
-        int count = userSandRep.getByCountAndUserUserSeq(userSeq) ; //누적 조개 수
-        UserProfileDTO userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count);
+        UserProfileDTO userProfile; // 조회한 사용자 프로필 정보
+        int count = userSandRep.getByCountAndUserUserSeq(userSeq); // 누적 조개 수
+        int status = 0; // 팔로우 유무 (본인일 경우 0)
+        if (currentUserDetails != null) { // 로그인한 사용자가 있을 경우
+            Long currentUserSeq = currentUserDetails.getUserSeq();
+            if (currentUserSeq != userSeq) { // 로그인한 사용자가 조회하려는 프로필이 본인 프로필이 아닐 경우
+                Following following = followingRep.findByFollowerAndAndFollowing(userSeq, user.getUserSeq());
+                status = (following != null ? 2 : 1); // 팔로잉 중이라면 2, 아니라면 1
+            }
+
+            userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, status);
+        }
+        else { // 로그인한 사용자가 없을 경우
+            status = 1;
+            userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, status);
+        }
+
         return userProfile;
     }
 
