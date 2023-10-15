@@ -4,11 +4,9 @@ import com.youngs.dto.FollowingDTO;
 import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserProfileDTO;
 import com.youngs.dto.UserSandDTO;
-import com.youngs.exception.NoChangeException;
 import com.youngs.security.PrincipalUserDetails;
 import com.youngs.service.MyPageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -46,30 +44,22 @@ public class MyPageController {
 
     /**
      * 사용자 프로필 편집 API - 프로필 이미지 및 닉네임 변경
-     * @author 이지은
-     * @param userSeq 프로필 변경할 사용자 인덱스
+     * @author : 박상희, 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq : 프로필 편집할 사용자의 고유 번호
      * @param request 사용자가 변경할 프로필 이미지와 닉네임
-     * @return 프로필 변경 성공했을 떄(200)/변경사항이 없을 때(204)/변경헤 실패했을 때(500)
-     * */
+     * @return - 프로필 편집 성공 시 : 200
+     * @return - 프로필 변경 사항이 없을 경우 : 204
+     * @return - 로그인하지 않은 상태로 프로필 편집을 시도했을 경우 : 401
+     * @return - 프로필 편집 실패 시 : 500
+     */
     @PatchMapping("/{userSeq}")
-    public ResponseEntity<?> changeProfile(@PathVariable Long userSeq, @RequestBody Map<String, String> request){
-        try{
-            String profile = request.get("profile"); //변경할 프로팔
-            String nickname = request.get("nickname"); //변경할 닉네임
+    public ResponseEntity<?> changeProfile(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @PathVariable Long userSeq, @RequestBody Map<String, String> request){
+        String profile = request.get("profile"); // 변경할 프로팔
+        String nickname = request.get("nickname"); // 변경할 닉네임
 
-            //사용자 프로필 및 닉네임 변경
-            myPageService.changeProfile(userSeq, profile, nickname);
-            return ResponseEntity.ok().body("프로필 변경에 성공했습니다.");
-        } catch(NoChangeException e){ //변경 사항이 없을 떄
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT) // 204
-                    .body(e.getMessage());
-        } catch (Exception e){
-            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
-            return ResponseEntity
-                    .internalServerError() // 500
-                    .body(responseDTO);
-        }
+        // 사용자 프로필 및 닉네임 변경
+        return myPageService.changeProfile(currentUserDetails, userSeq, profile, nickname);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.youngs.service;
 
 import com.youngs.dto.FollowingDTO;
+import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserProfileDTO;
 import com.youngs.dto.UserSandDTO;
 import com.youngs.entity.Following;
@@ -12,6 +13,8 @@ import com.youngs.repository.UserRepository;
 import com.youngs.repository.UserSandRepository;
 import com.youngs.security.PrincipalUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,28 +67,62 @@ public class MyPageServiceImpl implements  MyPageService{
 
     /**
      * 사용자 프로필 변경 - 프로필 이미지 및 닉네임
-     * @author 이지은
-     * @param userSeq 사용자 인덱스
-     * @param profile 사용자 프로필
-     * @param nickname 사용자 닉네임
-     * @exception RuntimeException 사용자가 존재 하지 않을 떼
-     * @exception RuntimeException 변경된 사항이 없을 떼
-     * */
+     * @author : 박상희, 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq : 프로필 편집할 사용자의 고유 번호
+     * @param profile : 변경할 프로필 이미지 이름
+     * @param nickname : 변경할 닉네임
+     * @return - 프로필 편집 성공 시 : 200
+     * @return - 프로필 변경 사항이 없을 경우 : 204
+     * @return - 로그인하지 않은 상태로 프로필 편집을 시도했을 경우 : 401
+     * @return - 프로필 편집 실패 시 : 500
+     * @throws RuntimeException - 편집할 프로필의 사용자가 존재하지 않을 경우
+     * @throws NoChangeException - 프로필 변경 사항이 없을 경우
+     **/
     @Override
-    public void changeProfile(Long userSeq, String profile, String nickname) throws RuntimeException {
-        User user = userRep.findByUserSeq(userSeq);
-        if(user == null){
-            throw new RuntimeException("사용자가 존재 하지 않습니다.");
-        }
+    public ResponseEntity<?> changeProfile(PrincipalUserDetails currentUserDetails, Long userSeq, String profile, String nickname) throws RuntimeException {
+        try {
+            if (currentUserDetails != null) { // 로그인한 사용자가 있을 경우
+                User user = userRep.findByUserSeq(userSeq);
+                if (user == null) {
+                    throw new RuntimeException("사용자가 존재 하지 않습니다.");
+                }
 
-        //프로필 이미지와 닉네임에 변화가 없다면
-        if(user.getProfile().equals(profile) && user.getNickname().equals(nickname)){
-            throw new NoChangeException("프로필 변경 사항이 없습니다.");
-        }
+                if (currentUserDetails.getUserSeq() == userSeq) { // 로그인한 사용자의 고유 번호와 편집할 프로필의 사용자의 고유 번호가 같을 경우
+                    // 프로필 이미지와 닉네임에 변화가 없다면
+                    if (user.getProfile().equals(profile) && user.getNickname().equals(nickname)) {
+                        throw new NoChangeException("프로필 변경 사항이 없습니다.");
+                    }
 
-        user.setProfile(profile);
-        user.setNickname(nickname);
-        userRep.save(user); //변경한 프로필 및 닉네임 저장
+                    user.setProfile(profile);
+                    user.setNickname(nickname);
+                    userRep.save(user); // 변경한 프로필 및 닉네임 저장
+
+                    return ResponseEntity.ok().body("프로필 변경에 성공했습니다.");
+                }
+                else { // 로그인한 사용자의 고유 번호와 편집할 프로필의 사용자의 고유 번호가 다를 경우
+                    return ResponseEntity
+                            .internalServerError() // 500
+                            .body("프로필 변경이 불가능합니다.");
+                }
+            }
+            else { // 로그인한 사용자가 없을 경우
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED) // 401 Error
+                        .body("프로필 편집 전, 로그인해 주세요.");
+            }
+        }
+        catch (NoChangeException e) { // 변경 사항이 없을 떄
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT) // 204
+                    .body(e.getMessage());
+        }
+        catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // 500
+                    .body(responseDTO);
+        }
     }
 
     /**
