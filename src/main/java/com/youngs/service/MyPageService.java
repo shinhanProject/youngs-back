@@ -3,16 +3,19 @@ package com.youngs.service;
 import com.youngs.dto.FollowingDTO;
 import com.youngs.dto.UserProfileDTO;
 import com.youngs.dto.UserSandDTO;
+import com.youngs.security.PrincipalUserDetails;
 
 import java.util.List;
 
 public interface MyPageService {
     /**
      * 사용자 프로필 조회
-     * @author 이지은
-     * @param userSeq 사용자 인덱스
-     * */
-    UserProfileDTO searchUserByUserSeq(Long userSeq);
+     * @author : 박상희, 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq : 조회할 사용자 고유 번호
+     * @return : 사용자 프로필 정보
+     **/
+    UserProfileDTO searchUserByUserSeq(PrincipalUserDetails currentUserDetails, Long userSeq);
 
     /**
      * 사용자 프로필 변경 - 프로필 이미지 및 닉네임
