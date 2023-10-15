@@ -122,6 +122,9 @@ public class AuthController {
 
             user.setRefreshToken(refreshToken); // 사용자 Refresh Token DB에 설정
             final UserDTO responseUserDTO = UserDTO.builder()
+                    .userSeq(user.getUserSeq())
+                    .nickname(user.getNickname())
+                    .profile(user.getProfile())
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
