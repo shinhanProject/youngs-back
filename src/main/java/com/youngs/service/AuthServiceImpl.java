@@ -88,16 +88,6 @@ public class AuthServiceImpl implements AuthService {
      **/
     @Override
     public ResponseEntity<?> reissueToken(String email, String refreshToken) {
-        if (!tokenProvider.validateToken(refreshToken, "RefreshToken")) { // Refresh Token이 유효하지 않을 경우
-            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
-                    .message("Refresh Token 정보가 유효하지 않습니다.")
-                    .build();
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST) // Error 400
-                    .body(responseDTO);
-        }
-
         if (email == null) {
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
                     .message("이메일 정보가 유효하지 않습니다.")
@@ -108,12 +98,33 @@ public class AuthServiceImpl implements AuthService {
                     .body(responseDTO);
         }
 
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("회원 정보를 찾지 못했습니다."));
+
+        if (!user.getRefreshToken().equals(refreshToken)) { // 전달받은 Refresh Token이 DB에 저장된 Refresh Token과 다를 경우
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .message("Refresh Token이 다릅니다.")
+                    .build();
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST) // Error 400
+                    .body(responseDTO);
+        }
+
+        if (!tokenProvider.validateToken(refreshToken, "RefreshToken")) { // Refresh Token이 유효하지 않을 경우
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .message("Refresh Token 정보가 유효하지 않습니다.")
+                    .build();
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST) // Error 400
+                    .body(responseDTO);
+        }
+
         // Refresh Token이 유효할 경우
         UserDetails userDetails = principalUserDetailsService.loadUserByUsername(email); // 사용자 이메일 기준으로 사용자 인증 정보 가져오기
         String newAccessToken = tokenProvider.createAccessToken(userDetails); // 새로운 Access Token 생성
         String newRefreshToken = tokenProvider.createRefreshToken(); // 새로운 Refresh Token 생성
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("회원 정보를 찾지 못했습니다."));
         user.setRefreshToken(newRefreshToken); // 새로운 Refresh Token DB에 저장
 
         final UserDTO responseUserDTO = UserDTO.builder()
