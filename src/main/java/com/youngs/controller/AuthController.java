@@ -3,6 +3,7 @@ package com.youngs.controller;
 import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserDTO;
 import com.youngs.entity.User;
+import com.youngs.repository.UserRepository;
 import com.youngs.security.PrincipalUserDetailsService;
 import com.youngs.security.TokenProvider;
 import com.youngs.service.AuthService;
@@ -24,6 +25,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
+    private final UserRepository userRepository;
+
     private final PrincipalUserDetailsService principalUserDetailsService;
 
     private final AuthService authService;
@@ -120,7 +123,9 @@ public class AuthController {
             final String accessToken = tokenProvider.createAccessToken(principalUserDetails);
             final String refreshToken = tokenProvider.createRefreshToken();
 
-            user.setRefreshToken(refreshToken); // 사용자 Refresh Token DB에 설정
+            user.setRefreshToken(refreshToken);
+            userRepository.save(user); // 사용자 Refresh Token DB에 설정
+
             final UserDTO responseUserDTO = UserDTO.builder()
                     .userSeq(user.getUserSeq())
                     .nickname(user.getNickname())
