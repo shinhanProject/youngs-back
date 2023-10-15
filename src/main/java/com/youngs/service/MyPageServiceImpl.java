@@ -33,11 +33,11 @@ public class MyPageServiceImpl implements  MyPageService{
      * @param currentUserDetails : 현재 로그인한 사용자 정보
      * @param userSeq : 조회할 사용자 고유 번호
      * @return 사용자 프로필 정보
-     * @throws RuntimeException
+     * @throws RuntimeException : 조회할 사용자 정보가 존재하지 않을 때
      */
     @Override
     public UserProfileDTO searchUserByUserSeq(PrincipalUserDetails currentUserDetails, Long userSeq) throws RuntimeException {
-        User user = userRep.findByUserSeq(userSeq); // 조회하려는 사용자 정보
+        User user = userRep.findByUserSeq(userSeq); // 조회할 사용자 정보
         if (user == null){ // 인덱스에 해당하는 유저가 없다면
             throw new RuntimeException("조회할 유저 정보가 없습니다.");
         }
