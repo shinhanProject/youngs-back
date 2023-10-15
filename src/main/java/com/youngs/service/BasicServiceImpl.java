@@ -2,6 +2,7 @@ package com.youngs.service;
 
 import com.youngs.dto.BasicArticleDTO;
 import com.youngs.entity.BasicArticle;
+import com.youngs.entity.NewsArticle;
 import com.youngs.repository.BasicRepository;
 import com.youngs.security.PrincipalUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -43,4 +44,20 @@ public class BasicServiceImpl implements BasicService{
         return basicArticleList;
     }
 
+    /**
+     * 카테고리에 해당하는 세부 기초 지식 조회
+     * @author 이지은
+     * @param categorySeq 기초 지식 카테고리 인덱스.  1: 주식 기초, 2: 주식 투자 기법, 3: 위험성, 4: 경제 기초 지식
+     * @param basicSeq 기초 지식 인덱스
+     * @exception RuntimeException 가져온 세부 기초지식 없다면 throw
+     * @return 세부 기초 지식
+     * */
+    @Override
+    public BasicArticleDTO searchBasicArticle(Long categorySeq, Long basicSeq) throws RuntimeException {
+        BasicArticle basicArticle = basicRep.findByBasicCategoryCategorySeqAndBasicSeq(categorySeq, basicSeq);
+        if(basicArticle == null){ //가져온 기초지식 정보가 없다면
+            throw new RuntimeException("조회할 기초지식 자료가 없습니다");
+        }
+        return new BasicArticleDTO(basicArticle.getBasicSeq(), basicArticle.getSubject(), basicArticle.getContext());
+    }
 }

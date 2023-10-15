@@ -18,4 +18,5 @@ public interface BasicRepository extends JpaRepository<BasicArticle, Integer> {
     @Query(value = "SELECT a.* FROM basic_article a WHERE a.category_seq = ?1 AND a.basic_seq NOT IN (SELECT s.basic_seq FROM basic_summary s WHERE s.user_seq = ?2)", nativeQuery = true)
     List<BasicArticle> findAllByUserNotStudy(Long categorySeq, Long userSeq);
 
+    BasicArticle findByBasicCategoryCategorySeqAndBasicSeq(Long categorySeq, Long basicSeq);
 }

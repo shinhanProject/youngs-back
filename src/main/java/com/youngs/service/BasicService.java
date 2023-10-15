@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BasicService {
     List<BasicArticleDTO> searchBasicArticleList(PrincipalUserDetails currentUserDetails, Long categorySeq, boolean isChecked);
+
+    BasicArticleDTO searchBasicArticle(Long categorySeq, Long basicSeq);
 }
