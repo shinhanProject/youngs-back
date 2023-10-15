@@ -27,15 +27,17 @@ public class BasicServiceImpl implements BasicService{
      * @return  모든 자료 리턴 - isChecked==false 및 로그인하지 않은 사용자일 때
      * */
     @Override
-    public List<BasicArticleDTO> searchBasicArticleList(PrincipalUserDetails currentUserDetails, Long categorySeq, boolean isChecked) {
+    public List<BasicArticleDTO> searchBasicArticleList(PrincipalUserDetails currentUserDetails, Long categorySeq, boolean isChecked) throws RuntimeException  {
         List<BasicArticle> basicArticle;
-        System.out.println("isChecked : " + isChecked);
         if(isChecked && currentUserDetails != null){ //'공부한 거 안보기 체크'하고 로그인한 사용자일 때
             Long currentUserSeq = currentUserDetails.getUserSeq(); //로그인한 사용자 고유 번호
             basicArticle = basicRep.findAllByUserNotStudy(categorySeq, currentUserSeq);
         } else {
             //모든 자료
             basicArticle = basicRep.findAllByBasicCategoryCategorySeq(categorySeq);
+        }
+        if(basicArticle.isEmpty()){ //가져온 기초지식 정보가 없다면
+            throw new RuntimeException("카테고리에 해당하는 기초지식 자료가 없습니다");
         }
         List<BasicArticleDTO> basicArticleList = new ArrayList<>();
         for(BasicArticle basic : basicArticle){
