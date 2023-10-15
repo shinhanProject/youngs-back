@@ -93,6 +93,15 @@ public class PrincipalUserDetails implements UserDetails {
     }
 
     /**
+     * 사용자 고유 번호를 반환하는 메서드
+     * @author : 박상희
+     * @return 사용자 고유 번호
+     **/
+    public Long getUserSeq() {
+        return userSeq;
+    }
+
+    /**
      * 사용자 객체로 PrincipalUserDetails 객체를 생성하고 반환하는 메서드
      * @author : 박상희
      * @param user : 사용자 객체

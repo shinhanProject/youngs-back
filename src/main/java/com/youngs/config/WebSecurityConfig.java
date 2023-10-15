@@ -30,10 +30,12 @@ public class WebSecurityConfig {
                 .sessionManagement() // session 기반이 아님을 선언
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests() // /와 /auth/** 경로는 인증 안 해도 된다.
-                    .antMatchers("/", "/auth/**").permitAll()
-                .anyRequest() // /와 /auth/** 이외의 모든 경로는 인증해야 된다.
+                .authorizeRequests() // /, /auth/**, /profile/**, /word/**, /news/**, /basic/**, /today-stock/**, /rank/** 경로는 인증 안 해도 된다.
+                    .antMatchers("/", "/auth/**", "/profile/**", "/word/**", "/news/**", "/basic/**", "/today-stock/**", "/rank/**").permitAll()
+                .anyRequest() // /와 /auth/**, /profile/**, /word/**, /news/**, /basic/**, /today-stock/**, /rank/** 이외의 모든 경로는 인증해야 된다.
                     .authenticated()
+                .and()
+                    .anonymous() // "ROLE_ANONYMOUS" 권한을 로그인하지 않은 사용자에게 자동으로 할당
                 .and() // filter 등록
                     .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class); // 매 요청마다 CorsFilter 실행한 후에 jwtAuthenticationFilter 실행한다.
 
