@@ -14,6 +14,7 @@ public class UserDTO {
     private String email;
     private String nickname;
     private String userPw;
+    private String profile;
     private int age;
     private String accessToken;
     private String refreshToken;
