@@ -34,6 +34,8 @@ public class WebSecurityConfig {
                     .antMatchers("/", "/auth/**").permitAll()
                 .anyRequest() // /와 /auth/** 이외의 모든 경로는 인증해야 된다.
                     .authenticated()
+                .and()
+                    .anonymous() // "ROLE_ANONYMOUS" 권한을 로그인하지 않은 사용자에게 자동으로 할당
                 .and() // filter 등록
                     .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class); // 매 요청마다 CorsFilter 실행한 후에 jwtAuthenticationFilter 실행한다.
 
