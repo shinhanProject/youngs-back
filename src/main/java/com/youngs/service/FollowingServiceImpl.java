@@ -37,7 +37,7 @@ public class FollowingServiceImpl implements FollowingService{
                 if (user != null && targetUser != null) { // 사용자와 팔루우할 대상이 모두 null이 아닐 때
                     // 팔로우가 되어 있는지 체크
                     Following following = followingRep.findByFollowerAndAndFollowing(currentUserSeq, targetUserSeq);
-                    if (following != null) { // 팔로우 중
+                    if (following != null) { // 팔로우 중일 경우
                         throw new RuntimeException("이미 팔로우한 대상자입니다.");
                     }
 
@@ -83,10 +83,10 @@ public class FollowingServiceImpl implements FollowingService{
                 User user = userRep.findByUserSeq(currentUserSeq);
                 User targetUser = userRep.findByUserSeq(targetUserSeq);
 
-                if (user != null && targetUser != null) { // 사용자와 팔루우할 대상이 모두 null이 아닐 때
+                if (user != null && targetUser != null) { // 사용자와 언팔로우할 대상이 모두 null이 아닐 때
                     // 팔로우가 되어 있는지 체크
                     Following following = followingRep.findByFollowerAndAndFollowing(currentUserSeq, targetUserSeq);
-                    if (following == null) { // 팔로우되어 있지 않다면
+                    if (following == null) { // 팔로우되어 있지 않을 경우
                         throw new RuntimeException("팔로우되어 있지 않아서 언팔로우할 대상자가 아닙니다.");
                     }
 
