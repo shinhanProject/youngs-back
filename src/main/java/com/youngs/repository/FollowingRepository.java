@@ -1,6 +1,7 @@
 package com.youngs.repository;
 
 import com.youngs.entity.Following;
+import com.youngs.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,4 +20,12 @@ public interface FollowingRepository extends JpaRepository<Following, Integer> {
     List<Following> findAllByFollowerUserSeq(Long userSeq);
 
     List<Following> findAllByFollowingUserSeq(Long userSeq);
+
+    /**
+     * 언팔로우 하기
+     * @author 이지은
+     * @param user 로그인한 사용자
+     * @param targetUser 언팔로우 대상자
+     * */
+    void deleteByFollowerAndFollowing(User user, User targetUser);
 }
