@@ -30,10 +30,12 @@ public class SummaryController {
      **/
     @PostMapping()
     public ResponseEntity<?> writeSummary(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @RequestBody SummaryDTO summaryDTO) {
-        if (summaryDTO.getCategory().equals("basic")) { // 기초 지식 요약 작성
+        String category = summaryDTO.getCategory(); // 요약을 작성할 카테고리
+
+        if (category.equals("basic")) { // 기초 지식 요약 작성
             return summaryService.writeBasicSummary(currentUserDetails.getUserSeq(), summaryDTO);
         }
-        else if (summaryDTO.getCategory().equals("news")) { // 보도자료 요약 작성
+        else if (category.equals("news")) { // 보도자료 요약 작성
             return summaryService.writeNewsSummary(currentUserDetails.getUserSeq(), summaryDTO);
         }
 

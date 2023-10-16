@@ -9,8 +9,16 @@ import java.util.List;
 
 public interface NewsSummaryRepository extends JpaRepository<NewsSummary, Long> {
     /**
+     * 사용자 고유 번호와 보도자료 글 고유 번호로 보도자료 요약 조회
+     * @author : 박상희
+     * @param userSeq : 사용자 고유 번호
+     * @param newsSeq : 보도자료 글 고유 번호
+     * @return 보도자료 요약
+     **/
+    NewsSummary findByUserUserSeqAndNewsArticleNewsSeq(Long userSeq, Long newsSeq);
+
+    /**
      * 사용자 요약 정보 최신 순 조회
-     *
      * @author 이지은
      * @param userSeq 사용자 고유 번호
      * @return 최신순으로 정렬한 요약 정보 리스트
@@ -28,5 +36,4 @@ public interface NewsSummaryRepository extends JpaRepository<NewsSummary, Long> 
             "where s.user_seq=?1\n" +
             "order by modifiedAt desc", nativeQuery = true)
     List<SummaryListDTO> findSummaryList(Long userSeq);
-
 }
