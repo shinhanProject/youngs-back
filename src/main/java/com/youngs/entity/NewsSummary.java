@@ -1,5 +1,6 @@
 package com.youngs.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,24 +23,26 @@ public class NewsSummary {
     @Id
     @Column(name = "summary_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long summmarySeq; //보도자료 요약 인덱스
+    private Long summmarySeq; // 보도자료 요약 고유 번호
 
     @Column(nullable = false)
-    private String context; //한 줄 요약 내용
+    private String context; // 한 줄 요약 내용
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "user_seq")
-    private User user; //작성한 유저
+    private User user; // 작성한 유저
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "news_seq")
-    private NewsArticle newsArticle; //요약한 보도자료
+    private NewsArticle newsArticle; // 요약한 보도자료
 
     @LastModifiedDate
     @Column(name = "modified_at")
-    private LocalDateTime modifiedAt; //수정일
+    private LocalDateTime modifiedAt; // 수정일
 
     @CreatedDate
     @Column(name = "created_at")
-    private LocalDateTime createdAt; //생성일
+    private LocalDateTime createdAt; // 생성일
 }

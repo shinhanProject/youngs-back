@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NewsRepository extends JpaRepository<NewsArticle, Integer> {
-
     /**
      * 카테고리에 해당하는 보도자료 리스트 가져오기
      * @author 이지은
@@ -15,4 +14,12 @@ public interface NewsRepository extends JpaRepository<NewsArticle, Integer> {
     List<NewsArticle> findAllByNewsCategoryCategorySeq(Long categorySeq);
 
     NewsArticle findByNewsCategoryCategorySeqAndNewsSeq(Long categorySeq, Long newsSeq);
+
+    /**
+     * 해당 보도자료 고유 번호의 보도자료 가져오기
+     * @author : 박상희
+     * @param newsSeq : 보도자료 고유 번호
+     * @return 보도자료
+     */
+    NewsArticle findByNewsSeq(Long newsSeq);
 }

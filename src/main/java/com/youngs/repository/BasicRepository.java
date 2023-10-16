@@ -19,4 +19,12 @@ public interface BasicRepository extends JpaRepository<BasicArticle, Integer> {
     List<BasicArticle> findAllByUserNotStudy(Long categorySeq, Long userSeq);
 
     BasicArticle findByBasicCategoryCategorySeqAndBasicSeq(Long categorySeq, Long basicSeq);
+
+    /**
+     * 해당 기초 지식 글의 고유 번호로 기초 지식 글 찾기
+     * @author : 박상희
+     * @param basicSeq 기초 지식 글의 고유 번호
+     * @return 기초 지식 글
+     **/
+    BasicArticle findByBasicSeq(Long basicSeq);
 }
