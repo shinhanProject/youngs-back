@@ -49,7 +49,7 @@ public interface MyPageService {
      * @param userSeq 사용자 인덱스
      * @author 이지은
      */
-    List<FollowingDTO> sarchFollowingList(Long userSeq);
+    List<FollowingDTO> sarchFollowingList(PrincipalUserDetails currentUserDetails, Long userSeq);
 
     /**
      * 팔로워 목록 조회
@@ -57,7 +57,7 @@ public interface MyPageService {
      * @param userSeq 사용자 인덱스
      * @author 이지은
      */
-    List<FollowingDTO> sarchFollowerList(Long userSeq);
+    List<FollowingDTO> sarchFollowerList(PrincipalUserDetails currentUserDetails, Long userSeq);
 
     /**
      * 사용자 요약 정보 최신 순 조회
@@ -67,5 +67,6 @@ public interface MyPageService {
      * @author 이지은
      * */
     ResponseEntity<?> searchSummary(PrincipalUserDetails currentUserDetails, Long userSeq);
+
 
 }
