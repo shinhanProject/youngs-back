@@ -44,7 +44,7 @@ public class SummaryServiceImpl implements SummaryService {
         try {
             SummaryDTO summaryDTO;
 
-            if (category.equals("basic")) {
+            if (category.equals("basic")) { // 조회할 요약의 카테고리가 '기초 지식'일 경우
                 BasicSummary basicSummary = basicSummaryRepository.findByUserUserSeqAndBasicArticleBasicSeq(userSeq, articleId);
                 if (basicSummary == null) { // 요약이 작성되어 있지 않을 경우
                     throw new RuntimeException("기초 지식 요약이 작성되어 있지 않습니다.");
@@ -56,7 +56,19 @@ public class SummaryServiceImpl implements SummaryService {
                                 .wasWritten(true)
                                 .build();
             }
-            else {
+            else if (category.equals("news")) { // 조회할 요약의 카테고리가 '보도자료'일 경우
+                NewsSummary newsSummary = newsSummaryRepository.findByUserUserSeqAndNewsArticleNewsSeq(userSeq, articleId);
+                if (newsSummary == null) {
+                    throw new RuntimeException("보도자료 요약이 작성되어 있지 않습니다.");
+                }
+
+                summaryDTO = SummaryDTO.builder()
+                        .summarySeq(newsSummary.getSummmarySeq())
+                        .context(newsSummary.getContext())
+                        .wasWritten(true)
+                        .build();
+            }
+            else { // 요약을 조회할 수 있는 카테고리의 글이 아닐 경우
                 throw new RuntimeException("요약을 조회할 수 있는 카테고리가 아닙니다.");
             }
 
