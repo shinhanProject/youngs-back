@@ -50,17 +50,14 @@ public class MyPageServiceImpl implements  MyPageService {
         int status = 0; // 팔로우 유무 (본인일 경우 0)
         if (currentUserDetails != null) { // 로그인한 사용자가 있을 경우
             Long currentUserSeq = currentUserDetails.getUserSeq();
-            if (currentUserSeq != userSeq) { // 로그인한 사용자가 조회하려는 프로필이 본인 프로필이 아닐 경우
-                Following following = followingRep.findByFollowerAndAndFollowing(userSeq, user.getUserSeq());
+            if (!currentUserSeq.equals(userSeq)) { // 로그인한 사용자가 조회하려는 프로필이 본인 프로필이 아닐 경우
+                Following following = followingRep.findByFollowerAndAndFollowing(currentUserSeq, user.getUserSeq());
                 status = (following != null ? 2 : 1); // 팔로잉 중이라면 2, 아니라면 1
             }
-
-            userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, status);
         } else { // 로그인한 사용자가 없을 경우
             status = 1;
-            userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, status);
         }
-
+        userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, status);
         return userProfile;
     }
 
