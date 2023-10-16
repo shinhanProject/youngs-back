@@ -30,6 +30,47 @@ public class SummaryServiceImpl implements SummaryService {
     private final NewsSummaryRepository newsSummaryRepository;
 
     /**
+     * 요약 조회
+     * @author : 박상희
+     * @param userSeq : 요약을 조회할 사용자의 고유 번호
+     * @param category : 조회할 요약의 카테고리
+     * @param articleId : 조회할 요약이 작성되어 있는 글의 고유 번호
+     * @return - 200 : 요약 조회 성공
+     * @return - 403 : 로그인하지 않은 사용자의 요청이므로 요약 조회 실패 (Spring Security의 설정으로 로그인하지 않은 사용자의 접근 제한)
+     * @return - 500 : 요약 조회 실패
+     **/
+    @Override
+    public ResponseEntity<?> searchSummary(Long userSeq, String category, Long articleId) {
+        try {
+            SummaryDTO summaryDTO;
+
+            if (category.equals("basic")) {
+                BasicSummary basicSummary = basicSummaryRepository.findByUserUserSeqAndBasicArticleBasicSeq(userSeq, articleId);
+                if (basicSummary == null) { // 요약이 작성되어 있지 않을 경우
+                    throw new RuntimeException("기초 지식 요약이 작성되어 있지 않습니다.");
+                }
+
+                summaryDTO = SummaryDTO.builder()
+                                .summarySeq(basicSummary.getSummmarySeq())
+                                .context(basicSummary.getContext())
+                                .wasWritten(true)
+                                .build();
+            }
+            else {
+                throw new RuntimeException("요약을 조회할 수 있는 카테고리가 아닙니다.");
+            }
+
+            return ResponseEntity.ok().body(summaryDTO);
+        }
+        catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // Error 500
+                    .body(responseDTO);
+        }
+    }
+
+    /**
      * 기초 지식 요약 작성 및 바다 기록
      * @author : 박상희
      * @param userSeq : 요약을 작성할 사용자의 고유 번호

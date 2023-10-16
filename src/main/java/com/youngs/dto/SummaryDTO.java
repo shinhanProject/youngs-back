@@ -14,4 +14,5 @@ public class SummaryDTO {
     String category; // 글 카테고리
     Long articleId; // 글 고유 번호
     String context; // 요약 내용
+    boolean wasWritten; // 요약 작성 여부
 }

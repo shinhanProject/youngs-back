@@ -5,6 +5,18 @@ import org.springframework.http.ResponseEntity;
 
 public interface SummaryService {
     /**
+     * 요약 조회
+     * @author : 박상희
+     * @param userSeq : 요약을 조회할 사용자의 고유 번호
+     * @param category : 조회할 요약의 카테고리
+     * @param articleId : 조회할 요약이 작성되어 있는 글의 고유 번호
+     * @return - 200 : 요약 조회 성공
+     * @return - 403 : 로그인하지 않은 사용자의 요청이므로 요약 조회 실패 (Spring Security의 설정으로 로그인하지 않은 사용자의 접근 제한)
+     * @return - 500 : 요약 조회 실패
+     **/
+    ResponseEntity<?> searchSummary(Long userSeq, String category, Long articleId);
+
+    /**
      * 기초 지식 요약 작성
      * @author : 박상희
      * @param userSeq : 요약을 작성할 사용자의 고유 번호
