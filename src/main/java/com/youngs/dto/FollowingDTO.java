@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class FollowingDTO {
+    private Long userSeq; //유저 고유 번호
     private String nickname; //유저 닉네임
     private String profile; //유저 프로필
     private int status; //팔로우 유무

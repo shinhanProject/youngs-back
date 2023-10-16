@@ -173,7 +173,7 @@ public class MyPageServiceImpl implements  MyPageService {
             } else { //로그인을 하지 않은 유저일 때
                 status = 1;
             }
-            followingDTOList.add(new FollowingDTO(user.getNickname(), user.getProfile(), status));
+            followingDTOList.add(new FollowingDTO(user.getUserSeq(), user.getNickname(), user.getProfile(), status));
         }
         return followingDTOList;
     }
@@ -207,7 +207,7 @@ public class MyPageServiceImpl implements  MyPageService {
             } else { //로그인을 하지 않은 유저일 때
                 status = 1;
             }
-            followerDTOList.add(new FollowingDTO(user.getNickname(), user.getProfile(), status));
+            followerDTOList.add(new FollowingDTO(user.getUserSeq(), user.getNickname(), user.getProfile(), status));
         }
         return followerDTOList;
     }
