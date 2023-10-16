@@ -153,6 +153,12 @@ public class SummaryServiceImpl implements SummaryService {
 
                 basicSummary.setContext(context); // 기초 지식 요약 수정
             }
+            else if (category.equals("news")) { // 수정할 요약의 카테고리가 '보도자료'일 경우
+                NewsSummary newsSummary = newsSummaryRepository.findById(summarySeq) // 수정할 보도자료 요약
+                        .orElseThrow(() -> new RuntimeException("수정할 보도자료 요약이 없습니다.")); // 요약 작성이 되어 있지 않을 경우
+
+                newsSummary.setContext(context); // 보도자료 요약 수정
+            }
             else { // 요약을 수정할 수 있는 카테고리의 글이 아닐 경우
                 throw new RuntimeException("요약을 수정할 카테고리가 잘못되었습니다.");
             }
