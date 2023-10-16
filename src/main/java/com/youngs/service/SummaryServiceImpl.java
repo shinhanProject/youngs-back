@@ -36,8 +36,9 @@ public class SummaryServiceImpl implements SummaryService {
     @Override
     public ResponseEntity<?> writeBasicSummary(Long userSeq, SummaryDTO summaryDTO) {
         try {
-            Long basicSeq = summaryDTO.getArticleId();
-            if (basicSummaryRepository.existsById(basicSeq)) { // 이미 요약 작성이 되어 있을 경우
+            Long basicSeq = summaryDTO.getArticleId(); // 요약을 작성할 기초 지식 글의 고유 번호
+
+            if (basicSummaryRepository.findByUserUserSeqAndBasicArticleBasicSeq(userSeq, basicSeq) != null) { // 이미 요약 작성이 되어 있을 경우
                 throw new RuntimeException("이미 기초 지식 요약이 작성되어 있습니다.");
             }
 
@@ -74,7 +75,8 @@ public class SummaryServiceImpl implements SummaryService {
     public ResponseEntity<?> writeNewsSummary(Long userSeq, SummaryDTO summaryDTO) {
         try {
             Long newsSeq = summaryDTO.getArticleId(); // 요약을 작성할 보도자료 고유 번호
-            if (newsSummaryRepository.existsById(newsSeq)) { // 이미 요약 작성이 되어 있을 경우
+
+            if (newsSummaryRepository.findByUserUserSeqAndNewsArticleNewsSeq(userSeq, newsSeq) != null) { // 이미 요약 작성이 되어 있을 경우
                 throw new RuntimeException("이미 보도자료 요약이 작성되어 있습니다.");
             }
 
