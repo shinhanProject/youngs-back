@@ -25,7 +25,8 @@ public interface NewsSummaryRepository extends JpaRepository<NewsSummary, Long> 
             "from basic_summary s\n" +
             "join basic_article a on s.basic_seq = a.basic_seq\n" +
             "join basic_category c on a.category_seq = c.category_seq\n" +
-            "where s.user_seq=?1", nativeQuery = true)
+            "where s.user_seq=?1\n" +
+            "order by modifiedAt desc", nativeQuery = true)
     List<SummaryListDTO> findSummaryList(Long userSeq);
 
 }
