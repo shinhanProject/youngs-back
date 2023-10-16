@@ -116,7 +116,7 @@ public class SummaryServiceImpl implements SummaryService {
      * @param userSeq : 바다를 기록할 사용자의 고유 번호
      * @param createdAt : 바다를 기록할 날짜
      **/
-        public void addSea(User user, Long userSeq, String createdAt) {
+    public void addSea(User user, Long userSeq, String createdAt) {
         if (userSandRepository.findByUserUserSeqAndCreatedAtDate(userSeq, createdAt) == null) { // 해당 사용자의 해당 날짜의 바다가 없을 경우
             UserSand userSand = UserSand.builder()
                             .user(user)
@@ -128,6 +128,58 @@ public class SummaryServiceImpl implements SummaryService {
         else { // 해당 사용자의 해당 날짜의 바다가 있을 경우
             UserSand userSand = userSandRepository.findByUserUserSeqAndCreatedAtDate(userSeq, createdAt); // 해당 사용자의 해당 날짜의 바다
             userSand.setCount(userSand.getCount() + 1); // 바다 기록 개수 추가
+        }
+    }
+
+    /**
+     * 요약 수정
+     * @author : 박상희
+     * @param userSeq : 요약을 수정할 사용자의 고유 번호
+     * @param summaryDTO : 수정할 요약 정보
+     * @return - 200 : 요약 수정 성공
+     * @return - 403 : 로그인하지 않은 사용자의 요청이므로 요약 수정 실패 (Spring Security의 설정으로 로그인하지 않은 사용자의 접근 제한)
+     * @return - 500 : 요약 수정 실패
+     **/
+    @Override
+    public ResponseEntity<?> editSummary(Long userSeq, SummaryDTO summaryDTO) {
+        try {
+            Long summarySeq = summaryDTO.getSummarySeq(); // 수정할 요약의 고유 번호
+            String category = summaryDTO.getCategory(); // 수정할 요약의 카테고리
+            String context = summaryDTO.getContext(); // 수정한 요약의 내용
+
+            if (category.equals("basic")) { // 수정할 요약의 카테고리가 '기초 지식'일 경우
+                BasicSummary basicSummary = basicSummaryRepository.findByUserUserSeqAndSummmarySeq(userSeq, summarySeq); // 해당 사용자의 수정할 기초 지식 요약
+
+                if (basicSummary == null) { // 요약 작성이 되어 있지 않을 경우
+                    throw new RuntimeException("수정할 기초 지식 요약이 없습니다.");
+                }
+
+                basicSummary.setContext(context); // 기초 지식 요약 수정
+            }
+            else if (category.equals("news")) { // 수정할 요약의 카테고리가 '보도자료'일 경우
+                NewsSummary newsSummary = newsSummaryRepository.findByUserUserSeqAndSummmarySeq(userSeq, summarySeq); // 해당 사용자의 수정할 보도자료 요약
+
+                if (newsSummary == null) { // 요약 작성이 되어 있지 않을 경우
+                    throw new RuntimeException("수정할 보도자료 요약이 없습니다.");
+                }
+
+                newsSummary.setContext(context); // 보도자료 요약 수정
+            }
+            else { // 요약을 수정할 수 있는 카테고리의 글이 아닐 경우
+                throw new RuntimeException("요약을 수정할 카테고리가 잘못되었습니다.");
+            }
+
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .message(category + " 요약을 수정했습니다. 수정한 요약 내용 : " + context)
+                    .build();
+
+            return ResponseEntity.ok().body(responseDTO);
+        }
+        catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // Error 500
+                    .body(responseDTO);
         }
     }
 }

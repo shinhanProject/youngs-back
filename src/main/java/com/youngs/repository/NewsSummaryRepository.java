@@ -18,6 +18,15 @@ public interface NewsSummaryRepository extends JpaRepository<NewsSummary, Long> 
     NewsSummary findByUserUserSeqAndNewsArticleNewsSeq(Long userSeq, Long newsSeq);
 
     /**
+     * 사용자 고유 번호와 보도자료 요약 고유 번호로 보도자료 요약 조회
+     * @author : 박상희
+     * @param userSeq : 사용자 고유 번호
+     * @param summarySeq : 보도자료 요약 고유 번호
+     * @return 보도자료 요약
+     **/
+    NewsSummary findByUserUserSeqAndSummmarySeq(Long userSeq, Long summarySeq);
+
+    /**
      * 사용자 요약 정보 최신 순 조회
      * @author 이지은
      * @param userSeq 사용자 고유 번호

@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SummaryDTO {
-    String category;
-    Long articleId;
-    String context;
+    Long summarySeq; // 요약 고유 번호
+    String category; // 글 카테고리
+    Long articleId; // 글 고유 번호
+    String context; // 요약 내용
 }
