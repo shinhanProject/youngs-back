@@ -18,6 +18,21 @@ public class SummaryController {
     private final SummaryService summaryService;
 
     /**
+     * 요약 조회
+     * @author : 박상희
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param category : 조회할 요약의 카테고리
+     * @param articleId : 조회할 요약이 작성되어 있는 글의 고유 번호
+     * @return - 200 : 요약 조회 성공
+     * @return - 403 : 로그인하지 않은 사용자의 요청이므로 요약 조회 실패 (Spring Security의 설정으로 로그인하지 않은 사용자의 접근 제한)
+     * @return - 500 : 요약 조회 실패
+     **/
+    @GetMapping()
+    public ResponseEntity<?> searchSummary(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @RequestParam("category") String category, @RequestParam("articleId") Long articleId) {
+        return summaryService.searchSummary(currentUserDetails.getUserSeq(), category, articleId);
+    }
+
+    /**
      * 요약 작성
      * @author : 박상희
      * @param currentUserDetails : 현재 로그인한 사용자 정보
