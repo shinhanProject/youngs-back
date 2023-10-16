@@ -13,4 +13,14 @@ public interface SummaryService {
      * @return - 500 : 기초 지식 요약 작성 실패
      **/
     public ResponseEntity<?> writeBasicSummary(Long userSeq, SummaryDTO summaryDTO);
+
+    /**
+     * 보도자료 요약 작성
+     * @author : 박상희
+     * @param userSeq : 요약을 작성할 사용자의 고유 번호
+     * @param summaryDTO : 작성할 요약 정보
+     * @return - 200 : 보도자료 요약 작성 성공
+     * @return - 500 : 보도자료 요약 작성 실패
+     **/
+    public ResponseEntity<?> writeNewsSummary(Long userSeq, SummaryDTO summaryDTO);
 }
