@@ -4,6 +4,7 @@ import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserDTO;
 import com.youngs.entity.User;
 import com.youngs.repository.UserRepository;
+import com.youngs.security.PrincipalUserDetails;
 import com.youngs.security.PrincipalUserDetailsService;
 import com.youngs.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,29 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return null;
+    }
+
+    /**
+     * 로그아웃
+     * @author : 박상희
+     * @param currentUserDetails : 로그인한 사용자 정보
+     * @return - 200 : 로그아웃 성공
+     * @return - 500 : 로그아웃 실패
+     **/
+    @Override
+    public ResponseEntity<?> logout(PrincipalUserDetails currentUserDetails) {
+        if (currentUserDetails != null) { // 현재 로그인한 사용자가 있을 경우
+            return ResponseEntity.ok().body("로그아웃에 성공했습니다.");
+        }
+        else {
+            ResponseDTO responseDTO = ResponseDTO.builder()
+                    .message("로그아웃에 실패했습니다.")
+                    .build();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
     }
 
     /**

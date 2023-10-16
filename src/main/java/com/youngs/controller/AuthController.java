@@ -4,12 +4,14 @@ import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserDTO;
 import com.youngs.entity.User;
 import com.youngs.repository.UserRepository;
+import com.youngs.security.PrincipalUserDetails;
 import com.youngs.security.PrincipalUserDetailsService;
 import com.youngs.security.TokenProvider;
 import com.youngs.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -145,6 +147,18 @@ public class AuthController {
                     .internalServerError()
                     .body(responseDTO);
         }
+    }
+
+    /**
+     * 로그아웃
+     * @author : 박상희
+     * @param currentUserDetails : 로그인한 사용자 정보
+     * @return - 200 : 로그아웃 성공
+     * @return - 500 : 로그아웃 실패
+     **/
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails) {
+        return authService.logout(currentUserDetails);
     }
 
     /**
