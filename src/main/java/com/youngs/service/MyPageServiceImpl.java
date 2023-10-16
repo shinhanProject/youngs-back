@@ -144,26 +144,30 @@ public class MyPageServiceImpl implements  MyPageService {
     /**
      * 팔로잉 조회
      *
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
      * @param userSeq 사용자 인덱스
      * @return 팔로잉 목록
      * @throws RuntimeException 가져온 팔로잉 목록 정보가 없다면 throw
      * @author 이지은
      */
     @Override
-    public List<FollowingDTO> sarchFollowingList(Long userSeq) {
+    public List<FollowingDTO> sarchFollowingList(PrincipalUserDetails currentUserDetails, Long userSeq) {
         List<Following> followingList = followingRep.findAllByFollowerUserSeq(userSeq);
         if (followingList.isEmpty()) {
             throw new RuntimeException("조회할 팔로잉 목록이 없습니다.");
         }
+
         List<FollowingDTO> followingDTOList = new ArrayList<>();
         for (Following f : followingList) {
             //팔로우 리스트로 불러온 사용자의 정보 조회
             User user = userRep.findByUserSeq(f.getFollowing().getUserSeq());
-
-            int status = 0; //default: 자기 자신일 때
-            if (userSeq != null) { //로그인을 한 유저일 때
-                if (!userSeq.equals(user.getUserSeq())) { //클릭한 타겟이 본인이 아닐 때
-                    Following following = followingRep.findByFollowerAndAndFollowing(userSeq, user.getUserSeq());
+            int status = 0; //0: 자기 자신일 때
+            if (currentUserDetails != null) { //로그인을 한 유저일 때
+                Long currentUserSeq = currentUserDetails.getUserSeq();
+                if (currentUserSeq.equals(userSeq)) { //로그인한 유저와 팔로잉 목록 조회 타겟이 같을 때
+                    status = 2;
+                } else if(!currentUserSeq.equals(user.getUserSeq())) {
+                    Following following = followingRep.findByFollowerAndAndFollowing(currentUserSeq, user.getUserSeq());
                     status = (following != null ? 2 : 1); //팔로잉 중이라면 2, 아니라면 1
                 }
             } else { //로그인을 하지 않은 유저일 때
@@ -177,13 +181,14 @@ public class MyPageServiceImpl implements  MyPageService {
     /**
      * 팔로워 조회
      *
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
      * @param userSeq 사용자 인덱스
      * @return 팔로워 목록
      * @throws RuntimeException 가져온 팔로워 목록 정보가 없다면 throw
      * @author 이지은
      */
     @Override
-    public List<FollowingDTO> sarchFollowerList(Long userSeq) {
+    public List<FollowingDTO> sarchFollowerList(PrincipalUserDetails currentUserDetails, Long userSeq) {
         List<Following> followerList = followingRep.findAllByFollowingUserSeq(userSeq);
         if (followerList.isEmpty()) {
             throw new RuntimeException("조회할 팔로워 목록이 없습니다.");
@@ -192,11 +197,11 @@ public class MyPageServiceImpl implements  MyPageService {
         for (Following f : followerList) {
             //팔로우 리스트로 불러온 사용자의 정보 조회
             User user = userRep.findByUserSeq(f.getFollower().getUserSeq());
-
             int status = 0; //default: 자기 자신일 때
-            if (userSeq != null) { //로그인을 한 유저일 때
-                if (!userSeq.equals(user.getUserSeq())) { //클릭한 타겟이 본인이 아닐 때
-                    Following following = followingRep.findByFollowerAndAndFollowing(userSeq, user.getUserSeq());
+            if (currentUserDetails != null) { //로그인을 한 유저일 때
+                Long currentUserSeq = currentUserDetails.getUserSeq();
+                if (!currentUserSeq.equals(user.getUserSeq())) { //클릭한 타겟이 본인이 아닐 때
+                    Following following = followingRep.findByFollowerAndAndFollowing(currentUserSeq, user.getUserSeq());
                     status = (following != null ? 2 : 1); //팔로잉 중이라면 2, 아니라면 1
                 }
             } else { //로그인을 하지 않은 유저일 때
