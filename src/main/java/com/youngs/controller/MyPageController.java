@@ -1,9 +1,6 @@
 package com.youngs.controller;
 
-import com.youngs.dto.FollowingDTO;
-import com.youngs.dto.ResponseDTO;
-import com.youngs.dto.UserProfileDTO;
-import com.youngs.dto.UserSandDTO;
+import com.youngs.dto.*;
 import com.youngs.security.PrincipalUserDetails;
 import com.youngs.service.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -120,6 +117,18 @@ public class MyPageController {
                     .internalServerError() // 500
                     .body(responseDTO);
         }
+    }
+
+    /**
+     * 사용자 요약 정보 최신 순 조회 API
+     * @author 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq : 조회할 사용자 고유 번호
+     * @return 사용자 요약 정보 리스트
+     * */
+    @GetMapping("/{userSeq}/summary")
+    public ResponseEntity<?> searchSummary(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @PathVariable Long userSeq){
+        return myPageService.searchSummary(currentUserDetails, userSeq);
     }
 
 }
