@@ -216,29 +216,38 @@ public class MyPageServiceImpl implements  MyPageService {
      * @author 이지은
      * @param currentUserDetails : 현재 로그인한 사용자 정보
      * @param userSeq            : 프로필 편집할 사용자의 고유 번호
-     * @exception RuntimeException 존재하지 않는 사용자/비공개 요약 리스트/빈 요약 리스트
+     * @exception RuntimeException 500 요약 정보 조회에 실패
+     * @exception RuntimeException 204 비공개 게시물
+     * @exception RuntimeException 404 빈 게시물
      * @return 최신순으로 정렬한 요약 정보 리스트
      */
-    public List<SummaryListDTO> searchSummary(PrincipalUserDetails currentUserDetails, Long userSeq) throws RuntimeException {
-        User user = userRep.findByUserSeq(userSeq);
-        if (user == null) {
-            throw new RuntimeException("존재하지 않는 사용자입니다.");
-        }
-
-        int isPrivate = userRep.findByUserSeq(userSeq).getIsPrivate(); //0: false, 1:true
-        if (currentUserDetails != null) { //로그인한 사용자일 때
-            Long currentUserSeq = currentUserDetails.getUserSeq(); //로그인한 사용자 고유 번호
-            if (!currentUserSeq.equals(userSeq) && isPrivate == 1) {  //로그인한 사용자와 조회할 사용자가 같지 않을 때
-                throw new RuntimeException("비공개 게시물입니다.");
+    public ResponseEntity<?> searchSummary(PrincipalUserDetails currentUserDetails, Long userSeq) throws RuntimeException {
+        try{
+            User user = userRep.findByUserSeq(userSeq);
+            if (user == null) {
+                throw new RuntimeException("요약 정보 조회에 실패했습니다.");
             }
-        } else if (isPrivate == 1) {
-            throw new RuntimeException("비공개 게시물입니다.");
-        }
 
-        List<SummaryListDTO> summaryList = summaryRep.findSummaryList(userSeq);
-        if(summaryList.isEmpty()){
-            throw new RuntimeException("게시물이 비었습니다.");
+            int isPrivate = userRep.findByUserSeq(userSeq).getIsPrivate(); //0: false, 1:true
+            if (currentUserDetails != null) { //로그인한 사용자일 때
+                Long currentUserSeq = currentUserDetails.getUserSeq(); //로그인한 사용자 고유 번호
+                if (!currentUserSeq.equals(userSeq) && isPrivate == 1) {  //로그인한 사용자와 조회할 사용자가 같지 않을 때
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("비공개 게시물입니다.");
+                }
+            } else if (isPrivate == 1) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("비공개 게시물입니다.");
+            }
+
+            List<SummaryListDTO> summaryList = summaryRep.findSummaryList(userSeq);
+            if(summaryList.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시물이 비었습니다.");
+            }
+            return ResponseEntity.ok().body(summaryList);
+        }catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // 500
+                    .body(responseDTO);
         }
-        return summaryList;
     }
 }

@@ -128,16 +128,7 @@ public class MyPageController {
      * */
     @GetMapping("/{userSeq}/summary")
     public ResponseEntity<?> searchSummary(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @PathVariable Long userSeq){
-        try{
-            //사용자 요약 정보 조회
-            List<SummaryListDTO> summaryList = myPageService.searchSummary(currentUserDetails, userSeq);
-            return ResponseEntity.ok().body(summaryList);
-        } catch (Exception e){
-            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
-            return ResponseEntity
-                    .internalServerError() // 500
-                    .body(responseDTO);
-        }
+        return myPageService.searchSummary(currentUserDetails, userSeq);
     }
 
 }

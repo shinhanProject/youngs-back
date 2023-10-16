@@ -66,6 +66,6 @@ public interface MyPageService {
      * @param userSeq            : 편집할 프로필의 사용자의 고유 번호
      * @author 이지은
      * */
-    List<SummaryListDTO> searchSummary(PrincipalUserDetails currentUserDetails, Long userSeq);
+    ResponseEntity<?> searchSummary(PrincipalUserDetails currentUserDetails, Long userSeq);
 
 }
