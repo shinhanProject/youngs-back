@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -26,6 +23,7 @@ public class SummaryController {
      * @param currentUserDetails : 현재 로그인한 사용자 정보
      * @param summaryDTO : 작성할 요약 정보
      * @return - 200 : 요약 작성 성공
+     * @return - 403 : 로그인하지 않은 사용자의 요청이므로 요약 작성 실패 (Spring Security의 설정으로 로그인하지 않은 사용자의 접근 제한)
      * @return - 500 : 요약 작성 실패
      **/
     @PostMapping()
@@ -44,5 +42,19 @@ public class SummaryController {
         return ResponseEntity
                 .internalServerError() // Error 500
                 .body(responseDTO);
+    }
+
+    /**
+     * 요약 수정
+     * @author : 박상희
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param summaryDTO : 수정할 요약 정보
+     * @return - 200 : 요약 수정 성공
+     * @return - 403 : 로그인하지 않은 사용자의 요청이므로 요약 수정 실패 (Spring Security의 설정으로 로그인하지 않은 사용자의 접근 제한)
+     * @return - 500 : 요약 수정 실패
+     **/
+    @PatchMapping()
+    public ResponseEntity<?> editSummary(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @RequestBody SummaryDTO summaryDTO) {
+        return summaryService.editSummary(currentUserDetails.getUserSeq(), summaryDTO);
     }
 }
