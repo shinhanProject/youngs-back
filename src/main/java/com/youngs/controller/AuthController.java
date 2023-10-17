@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Slf4j
@@ -112,13 +114,13 @@ public class AuthController {
      * @return - 로그인 실패 시 : 500
      **/
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO, HttpServletResponse response) {
         User user = authService.getByCredentials(
                 userDTO.getEmail(),
                 userDTO.getUserPw(),
                 passwordEncoder);
 
-        if(user != null) {
+        if (user != null) {
             UserDetails principalUserDetails = principalUserDetailsService.loadUserByUsername(user.getEmail());
 
             // 토큰 생성
@@ -128,12 +130,21 @@ public class AuthController {
             user.setRefreshToken(refreshToken);
             userRepository.save(user); // 사용자 Refresh Token DB에 설정
 
+            Cookie cookie = new Cookie("refreshToken", refreshToken); // 쿠키 생성
+            cookie.setMaxAge(30 * 24 * 60 * 60); // 쿠키 유효 시간 30 일
+
+            // 쿠키 옵션 설정
+            cookie.setSecure(true); // HTTPS에서만 쿠키 전송
+            cookie.setHttpOnly(true); // JavaScript에서 쿠키 접근 불가
+            cookie.setPath("/"); // 쿠키의 경로 설정
+
+            response.addCookie(cookie); // 쿠키를 클라이언트로 전송
+
             final UserDTO responseUserDTO = UserDTO.builder()
                     .userSeq(user.getUserSeq())
                     .nickname(user.getNickname())
                     .profile(user.getProfile())
                     .accessToken(accessToken)
-                    .refreshToken(refreshToken)
                     .build();
 
             return ResponseEntity.ok().body(responseUserDTO);
