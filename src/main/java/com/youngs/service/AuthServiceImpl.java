@@ -145,6 +145,8 @@ public class AuthServiceImpl implements AuthService {
                 user.setRefreshToken(newRefreshToken); // 사용자의 Refresh Token 새로운 Refresh Token으로 설정
                 userRepository.save(user); // 새로운 Refresh Token DB에 저장
 
+                createCookie(response, newRefreshToken); // 새로운 쿠키 생성
+
                 final UserDTO responseUserDTO = UserDTO.builder()
                         .accessToken(newAccessToken) // 새로운 Access Token 반환
                         .build();
@@ -173,6 +175,24 @@ public class AuthServiceImpl implements AuthService {
                     .internalServerError() // Error 500
                     .body(responseDTO);
         }
+    }
+
+    /**
+     * 쿠키를 생성하여 쿠키에 Refresh Token을 저장하고 클라이언트에 전달하는 메서드
+     * @author : 박상희
+     * @param response : HTTP 응답을 조작하기 위한 HttpServletResponse 객체
+     * @param refreshToken : 사용자의 현재 Refresh Token
+     **/
+    public void createCookie(HttpServletResponse response, String refreshToken) {
+        Cookie newCookie = new Cookie("refreshToken", refreshToken); // 쿠키 생성
+        newCookie.setMaxAge(30 * 24 * 60 * 60); // 쿠키 유효 시간 30 일
+
+        // 쿠키 옵션 설정
+        newCookie.setSecure(true); // HTTPS에서만 쿠키 전송
+        newCookie.setHttpOnly(true); // JavaScript에서 쿠키 접근 불가
+        newCookie.setPath("/"); // 쿠키의 경로 설정
+
+        response.addCookie(newCookie); // 쿠키를 클라이언트로 전송
     }
 
     /**
