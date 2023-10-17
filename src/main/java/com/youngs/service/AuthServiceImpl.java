@@ -136,6 +136,8 @@ public class AuthServiceImpl implements AuthService {
                 }
 
                 // Refresh Token이 유효할 경우
+                deleteCookie(response); // 기존의 쿠키 삭제
+
                 UserDetails userDetails = principalUserDetailsService.loadUserByUsername(email); // 사용자 이메일 기준으로 사용자 인증 정보 가져오기
                 String newAccessToken = tokenProvider.createAccessToken(userDetails); // 새로운 Access Token 생성
                 String newRefreshToken = tokenProvider.createRefreshToken(); // 새로운 Refresh Token 생성
@@ -171,5 +173,18 @@ public class AuthServiceImpl implements AuthService {
                     .internalServerError() // Error 500
                     .body(responseDTO);
         }
+    }
+
+    /**
+     * 클라이언트의 쿠키에서 Refresh Token을 삭제하는 메서드
+     * @author : 박상희
+     * @param response : HTTP 응답을 조작하기 위한 HttpServletResponse 객체
+     **/
+    public void deleteCookie(HttpServletResponse response) {
+        Cookie deleteCookie = new Cookie("refreshToken", null); // 쿠키를 빈 값으로 설정하여 삭제
+
+        deleteCookie.setMaxAge(0); // 쿠키 만료 시간을 0으로 설정하여 삭제
+
+        response.addCookie(deleteCookie); // 쿠키를 클라이언트로 전송
     }
 }
