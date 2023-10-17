@@ -9,14 +9,15 @@ import javax.persistence.Table;
 
 @Entity
 @Getter
-@Table(name = "stockCode")
-public class StockCode {
+@Table(name = "stock_corp_code")
+public class StockCorpCode {
     @Id
-    private String corp_code;
+    @Column(name = "corp_code")
+    private String corpCode;
 
     @Column(name = "stock_code")
-    private String stock_code;
+    private String stockCode;
 
     @Column(name = "corp_name")
-    private String corp_name;
+    private String corpName;
 }
