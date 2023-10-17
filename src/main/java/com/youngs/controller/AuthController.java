@@ -131,7 +131,6 @@ public class AuthController {
             cookie.setMaxAge(30 * 24 * 60 * 60); // 쿠키 유효 시간 30 일
 
             // 쿠키 옵션 설정
-            cookie.setSecure(true); // HTTPS에서만 쿠키 전송
             cookie.setHttpOnly(true); // JavaScript에서 쿠키 접근 불가
             cookie.setPath("/"); // 쿠키의 경로 설정
 
