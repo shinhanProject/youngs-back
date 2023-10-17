@@ -51,7 +51,7 @@ public class SummaryServiceImpl implements SummaryService {
                 }
 
                 summaryDTO = SummaryDTO.builder()
-                                .summarySeq(basicSummary.getSummmarySeq())
+                                .summarySeq(basicSummary.getSummarySeq())
                                 .context(basicSummary.getContext())
                                 .wasWritten(true)
                                 .build();
@@ -63,7 +63,7 @@ public class SummaryServiceImpl implements SummaryService {
                 }
 
                 summaryDTO = SummaryDTO.builder()
-                        .summarySeq(newsSummary.getSummmarySeq())
+                        .summarySeq(newsSummary.getSummarySeq())
                         .context(newsSummary.getContext())
                         .wasWritten(true)
                         .build();
@@ -201,7 +201,7 @@ public class SummaryServiceImpl implements SummaryService {
             String context = summaryDTO.getContext(); // 수정한 요약의 내용
 
             if (category.equals("basic")) { // 수정할 요약의 카테고리가 '기초 지식'일 경우
-                BasicSummary basicSummary = basicSummaryRepository.findByUserUserSeqAndSummmarySeq(userSeq, summarySeq); // 해당 사용자의 수정할 기초 지식 요약
+                BasicSummary basicSummary = basicSummaryRepository.findByUserUserSeqAndSummarySeq(userSeq, summarySeq); // 해당 사용자의 수정할 기초 지식 요약
 
                 if (basicSummary == null) { // 요약 작성이 되어 있지 않을 경우
                     throw new RuntimeException("수정할 기초 지식 요약이 없습니다.");
@@ -210,7 +210,7 @@ public class SummaryServiceImpl implements SummaryService {
                 basicSummary.setContext(context); // 기초 지식 요약 수정
             }
             else if (category.equals("news")) { // 수정할 요약의 카테고리가 '보도자료'일 경우
-                NewsSummary newsSummary = newsSummaryRepository.findByUserUserSeqAndSummmarySeq(userSeq, summarySeq); // 해당 사용자의 수정할 보도자료 요약
+                NewsSummary newsSummary = newsSummaryRepository.findByUserUserSeqAndSummarySeq(userSeq, summarySeq); // 해당 사용자의 수정할 보도자료 요약
 
                 if (newsSummary == null) { // 요약 작성이 되어 있지 않을 경우
                     throw new RuntimeException("수정할 보도자료 요약이 없습니다.");
