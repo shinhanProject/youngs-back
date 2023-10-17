@@ -133,4 +133,17 @@ public class MyPageController {
         return myPageService.searchSummary(currentUserDetails, userSeq);
     }
 
+
+    /**
+     * 요약 정보 공개 옵션 변경  API
+     * @author 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq : 조회할 사용자 고유 번호
+     * @return 사용자 요약 정보 리스트
+     * */
+    @PatchMapping("/{userSeq}/private")
+    public ResponseEntity<?> changeIsPrivate(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @PathVariable Long userSeq, @RequestBody Map<String, Integer> request){
+        int isPrivate = request.get("isPrivate");
+        return myPageService.changeIsPrivate(currentUserDetails, userSeq, isPrivate);
+    }
 }
