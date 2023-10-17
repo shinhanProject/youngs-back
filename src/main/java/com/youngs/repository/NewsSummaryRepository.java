@@ -24,7 +24,7 @@ public interface NewsSummaryRepository extends JpaRepository<NewsSummary, Long> 
      * @param summarySeq : 보도자료 요약 고유 번호
      * @return 보도자료 요약
      **/
-    NewsSummary findByUserUserSeqAndSummmarySeq(Long userSeq, Long summarySeq);
+    NewsSummary findByUserUserSeqAndSummarySeq(Long userSeq, Long summarySeq);
 
     /**
      * 사용자 요약 정보 최신 순 조회

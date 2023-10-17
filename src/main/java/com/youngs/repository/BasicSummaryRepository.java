@@ -20,5 +20,5 @@ public interface BasicSummaryRepository extends JpaRepository<BasicSummary, Long
      * @param summarySeq : 기초 지식 요약 고유 번호
      * @return 기초 지식 요약
      **/
-    BasicSummary findByUserUserSeqAndSummmarySeq(Long userSeq, Long summarySeq);
+    BasicSummary findByUserUserSeqAndSummarySeq(Long userSeq, Long summarySeq);
 }

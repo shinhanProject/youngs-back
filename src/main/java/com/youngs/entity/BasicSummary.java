@@ -23,7 +23,7 @@ public class BasicSummary {
     @Id
     @Column(name = "summary_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long summmarySeq; // 기초 지식 요약 고유 번호
+    private Long summarySeq; // 기초 지식 요약 고유 번호
 
     @Column(nullable = false)
     private String context; // 한 줄 요약 내용

@@ -23,7 +23,7 @@ public class NewsSummary {
     @Id
     @Column(name = "summary_seq")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long summmarySeq; // 보도자료 요약 고유 번호
+    private Long summarySeq; // 보도자료 요약 고유 번호
 
     @Column(nullable = false)
     private String context; // 한 줄 요약 내용
