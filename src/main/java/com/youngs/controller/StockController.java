@@ -3,6 +3,8 @@ package com.youngs.controller;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.youngs.dto.ResponseDTO;
 import com.youngs.service.StockChartService;
+import com.youngs.service.StockService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stock")
 public class StockController {
     private final StockChartService stockChartService;
-
+    private final StockService stockService;
     /**
      * 주식 차트 데이터 가져오기
      *
@@ -48,6 +51,23 @@ public class StockController {
     @GetMapping("/stat/{name}")
     public ResponseEntity<Object> getFnStatements(@PathVariable(value = "name") String name) {
         return null;
+    }
+
+    /**
+     * 전체 주식 리스트 가져오기
+     * @return 전체 주식 리스트
+     */
+    @GetMapping()
+    public ResponseEntity<?> getStocks() {
+        try {
+            List<String> result = stockService.getStocks();
+            return ResponseEntity.ok().body(result);
+        } catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
     }
 
 }
