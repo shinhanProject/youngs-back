@@ -252,4 +252,49 @@ public class MyPageServiceImpl implements  MyPageService {
                     .body(responseDTO);
         }
     }
+
+    /**
+     * 요약 정보 공개 옵션 변경  API
+     *
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq            : 공개여부 변경할 사용자의 고유 번호
+     * @param isPrivate          : 공개여부 - 0: 공개 1: 비공개
+     * @author 이지은
+     * @exception RuntimeException 500 공개 옵션 변경 실패
+     * @exception RuntimeException 401 변경 권한이 없을 때
+     * @return 요약 정보 공개 옵션 변경
+     * */
+    @Override
+    public ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, int isPrivate){
+        try{
+            User user = userRep.findByUserSeq(userSeq);
+            if (user == null) {
+                throw new RuntimeException("사용지 조회에 실패했습니다.");
+            }
+
+            if(currentUserDetails != null){ //로그인한 사용자일 때
+                Long currentUserSeq = currentUserDetails.getUserSeq();
+                if(!currentUserSeq.equals(userSeq)){ //다른 사용자일 때
+                    return ResponseEntity
+                            .status(HttpStatus.UNAUTHORIZED) // 401 Error
+                            .body("공개여부 설정을 변경할 수 있는 권한이 없습니다.");
+                }
+                if(isPrivate!=0 && isPrivate != 1) {
+                    throw new RuntimeException("잘못된 요청입니다.");
+                }
+                if(isPrivate==0) user.setIsPrivate(0); //공개 설정
+                else user.setIsPrivate(1); //비공개 설정
+
+                userRep.save(user);
+                return ResponseEntity.ok().body("공개 설정 변경에 성공했습니다.");
+            } else {
+                throw new RuntimeException("잘못된 정보입니다.");
+            }
+        } catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // 500
+                    .body(responseDTO);
+        }
+    }
 }

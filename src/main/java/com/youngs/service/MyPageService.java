@@ -68,5 +68,14 @@ public interface MyPageService {
      * */
     ResponseEntity<?> searchSummary(PrincipalUserDetails currentUserDetails, Long userSeq);
 
+    /**
+     * 요약 정보 공개 옵션 변경  API
+     *
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param userSeq            : 공개여부 변경할 사용자의 고유 번호
+     * @param isPrivate          : 공개여부 - 0: 공개 1: 비공개
+     * @author 이지은
+     * */
+    ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, int isPrivate);
 
 }
