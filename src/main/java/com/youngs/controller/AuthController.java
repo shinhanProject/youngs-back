@@ -15,10 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -175,12 +172,14 @@ public class AuthController {
     /**
      * 토큰 재발급 메서드
      * @author : 박상희
-     * @param userDTO : 사용자 이메일과 사용자 Refresh Token이 포함된 사용자 정보
-     * @return - 토큰 재발급 성공 시 : 200, Access Token과 Refresh Token
+     * @param refreshToken : 쿠키에 저장되어 있는 사용자의 현재 Refresh Token
+     * @param response : HTTP 응답을 조작하기 위한 HttpServletResponse 객체
+     * @param emailMap : 사용자 이메일
+     * @return - 토큰 재발급 성공 시 : 200, Access Token
      * @return - 토큰 재발급 실패 시 : 유효하지 않은 Refresh Token일 경우 400, 사용자 이메일 정보가 유효하지 않을 경우 500
-     */
+     **/
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissueToken(@RequestBody UserDTO userDTO) {
-        return authService.reissueToken(userDTO.getEmail(), userDTO.getRefreshToken());
+    public ResponseEntity<?> refreshAccessToken(@CookieValue(value = "refreshToken", required = false) String refreshToken, HttpServletResponse response, @RequestBody Map<String, String> emailMap) {
+        return authService.reissueToken(response, emailMap.get("email"), refreshToken);
     }
 }

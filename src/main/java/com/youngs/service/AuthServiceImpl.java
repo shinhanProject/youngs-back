@@ -3,6 +3,7 @@ package com.youngs.service;
 import com.youngs.dto.ResponseDTO;
 import com.youngs.dto.UserDTO;
 import com.youngs.entity.User;
+import com.youngs.exception.RefreshTokenException;
 import com.youngs.repository.UserRepository;
 import com.youngs.security.PrincipalUserDetails;
 import com.youngs.security.PrincipalUserDetailsService;
@@ -15,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @Service
@@ -106,56 +110,66 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Access Token이 만료되었으나 Refresh Token이 유효할 경우, 새로운 Access Token과 Refresh Token을 생성하는 메서드
      * @author : 박상희
+     * @param response : HTTP 응답을 조작하기 위한 HttpServletResponse 객체
      * @param email : 사용자 이메일
      * @param refreshToken : 사용자의 현재 Refresh Token
-     * @return Access Token과 Refresh Token이 포함된 ResponseEntity
-     **/
+     * @return - 토큰 재발급 성공 시 : 200, Access Token
+     * @return - 토큰 재발급 실패 시 : 유효하지 않은 Refresh Token일 경우 400, 사용자 이메일 정보가 유효하지 않을 경우 500
+     */
     @Override
-    public ResponseEntity<?> reissueToken(String email, String refreshToken) {
-        if (email == null) {
+    public ResponseEntity<?> reissueToken(HttpServletResponse response, String email, String refreshToken) {
+        try {
+            if (refreshToken != null) { // 쿠키에 Refresh Token이 있을 경우
+                if (email == null) {
+                    throw new RuntimeException("이메일 정보가 유효하지 않습니다."); // Error 500
+                }
+
+                User user = userRepository.findByEmail(email) // 토큰 재발급을 요청한 사용자
+                        .orElseThrow(() -> new RuntimeException("회원 정보를 찾지 못했습니다.")); // Error 500
+
+                if (!user.getRefreshToken().equals(refreshToken)) { // 쿠키에 저장된 Refresh Token이 DB에 저장된 Refresh Token과 다를 경우
+                    throw new RefreshTokenException("Refresh Token이 다릅니다."); // Error 400
+                }
+
+                if (!tokenProvider.validateToken(refreshToken, "RefreshToken")) { // Refresh Token이 유효하지 않을 경우
+                    throw new RefreshTokenException("Refresh Token 정보가 유효하지 않습니다."); // Error 400
+                }
+
+                // Refresh Token이 유효할 경우
+                UserDetails userDetails = principalUserDetailsService.loadUserByUsername(email); // 사용자 이메일 기준으로 사용자 인증 정보 가져오기
+                String newAccessToken = tokenProvider.createAccessToken(userDetails); // 새로운 Access Token 생성
+                String newRefreshToken = tokenProvider.createRefreshToken(); // 새로운 Refresh Token 생성
+
+                user.setRefreshToken(newRefreshToken); // 사용자의 Refresh Token 새로운 Refresh Token으로 설정
+                userRepository.save(user); // 새로운 Refresh Token DB에 저장
+
+                final UserDTO responseUserDTO = UserDTO.builder()
+                        .accessToken(newAccessToken) // 새로운 Access Token 반환
+                        .build();
+
+                return ResponseEntity.ok().body(responseUserDTO);
+            }
+            else { // 쿠키에 Refresh Token이 없을 경우
+                throw new RuntimeException("쿠키에서 Refresh Token을 찾을 수 없습니다.");
+            }
+        }
+        catch (RefreshTokenException re) {
             ResponseDTO<Object> responseDTO = ResponseDTO.builder()
-                    .message("이메일 정보가 유효하지 않습니다.")
+                    .message(re.getMessage())
+                    .build();
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST) // Error 400
+                    .body(responseDTO);
+        }
+        catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
+                    .message(e.getMessage())
                     .build();
 
             return ResponseEntity
                     .internalServerError() // Error 500
                     .body(responseDTO);
         }
-
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("회원 정보를 찾지 못했습니다."));
-
-        if (!user.getRefreshToken().equals(refreshToken)) { // 전달받은 Refresh Token이 DB에 저장된 Refresh Token과 다를 경우
-            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
-                    .message("Refresh Token이 다릅니다.")
-                    .build();
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST) // Error 400
-                    .body(responseDTO);
-        }
-
-        if (!tokenProvider.validateToken(refreshToken, "RefreshToken")) { // Refresh Token이 유효하지 않을 경우
-            ResponseDTO<Object> responseDTO = ResponseDTO.builder()
-                    .message("Refresh Token 정보가 유효하지 않습니다.")
-                    .build();
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST) // Error 400
-                    .body(responseDTO);
-        }
-
-        // Refresh Token이 유효할 경우
-        UserDetails userDetails = principalUserDetailsService.loadUserByUsername(email); // 사용자 이메일 기준으로 사용자 인증 정보 가져오기
-        String newAccessToken = tokenProvider.createAccessToken(userDetails); // 새로운 Access Token 생성
-        String newRefreshToken = tokenProvider.createRefreshToken(); // 새로운 Refresh Token 생성
-
-        user.setRefreshToken(newRefreshToken); // 새로운 Refresh Token DB에 저장
-
-        final UserDTO responseUserDTO = UserDTO.builder()
-                .accessToken(newAccessToken) // 새로운 Access Token 반환
-                .refreshToken(newRefreshToken)
-                .build();
-
-        return ResponseEntity.ok().body(responseUserDTO);
     }
 }
