@@ -24,8 +24,8 @@ public interface FollowingRepository extends JpaRepository<Following, Integer> {
     /**
      * 언팔로우 하기
      * @author 이지은
-     * @param user 로그인한 사용자
-     * @param targetUser 언팔로우 대상자
+     * @param currentUserSeq 로그인한 사용자
+     * @param targetUserSeq 언팔로우 대상자
      * */
-    void deleteByFollowerAndFollowing(User user, User targetUser);
+     void deleteByFollowerUserSeqAndFollowingUserSeq(Long currentUserSeq, Long targetUserSeq);
 }

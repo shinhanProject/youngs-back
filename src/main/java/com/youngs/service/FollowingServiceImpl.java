@@ -89,8 +89,7 @@ public class FollowingServiceImpl implements FollowingService{
                     if (following == null) { // 팔로우되어 있지 않을 경우
                         throw new RuntimeException("팔로우되어 있지 않아서 언팔로우할 대상자가 아닙니다.");
                     }
-
-                    followingRep.deleteByFollowerAndFollowing(user, targetUser);
+                    followingRep.deleteByFollowerUserSeqAndFollowingUserSeq(currentUserSeq, targetUserSeq);
                 }
                 else {
                     throw new RuntimeException("대상자를 찾을 수 없습니다.");
