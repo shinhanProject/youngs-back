@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -28,6 +29,8 @@ public class SummaryServiceImpl implements SummaryService {
     private final NewsRepository newsRepository;
 
     private final NewsSummaryRepository newsSummaryRepository;
+
+    private final TierRepository tierRepository;
 
     /**
      * 요약 조회
@@ -180,6 +183,20 @@ public class SummaryServiceImpl implements SummaryService {
             UserSand userSand = userSandRepository.findByUserUserSeqAndCreatedAtDate(userSeq, createdAt); // 해당 사용자의 해당 날짜의 바다
             userSand.setCount(userSand.getCount() + 1); // 바다 기록 개수 추가
         }
+
+        int currentPoint = user.getPoint(); //사용자의 현재 포인트
+        user.setPoint(currentPoint + 10); // 한 번의 커밋당 사용자 포인트에 +10 저장
+        List<Tier> tierList = tierRepository.findAll(); //티어 리스트 조회
+
+        // 사용자의 티어 확인하기
+        for(Tier tier : tierList){
+            if(tier.getLowPoint() <= currentPoint && currentPoint < tier.getHighPoint()){ //해당 범위에 속한다면
+                if(!tier.getTierName().equals(user.getTier())){ //티어에 변동이 있다면
+                    user.setTier(tier.getTierName()); //티어를 변경
+                }
+            }
+        }
+        userRepository.save(user);
     }
 
     /**
