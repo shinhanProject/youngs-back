@@ -57,7 +57,7 @@ public class MyPageServiceImpl implements  MyPageService {
         } else { // 로그인한 사용자가 없을 경우
             status = 1;
         }
-        userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, (user.getIsPrivate() == 1), status); //1일때 true, 0일 때 false
+        userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, (user.getOnlyMe() == 1), status); //1일때 true, 0일 때 false
         return userProfile;
     }
 
@@ -230,7 +230,7 @@ public class MyPageServiceImpl implements  MyPageService {
                 throw new RuntimeException("요약 정보 조회에 실패했습니다.");
             }
 
-            int isPrivate = userRep.findByUserSeq(userSeq).getIsPrivate(); //0: false, 1:true
+            int isPrivate = userRep.findByUserSeq(userSeq).getOnlyMe(); //0: false, 1:true
             if (currentUserDetails != null) { //로그인한 사용자일 때
                 Long currentUserSeq = currentUserDetails.getUserSeq(); //로그인한 사용자 고유 번호
                 if (!currentUserSeq.equals(userSeq) && isPrivate == 1) {  //로그인한 사용자와 조회할 사용자가 같지 않을 때
@@ -258,14 +258,14 @@ public class MyPageServiceImpl implements  MyPageService {
      *
      * @param currentUserDetails : 현재 로그인한 사용자 정보
      * @param userSeq            : 공개여부 변경할 사용자의 고유 번호
-     * @param isPrivate          : 공개여부 - 0: 공개 1: 비공개
+     * @param onlyMe          : 공개여부 - 0: 공개 1: 비공개
      * @author 이지은
      * @exception RuntimeException 500 공개 옵션 변경 실패
      * @exception RuntimeException 401 변경 권한이 없을 때
      * @return 요약 정보 공개 옵션 변경
      * */
     @Override
-    public ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, boolean isPrivate){
+    public ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, boolean onlyMe){
         try{
             User user = userRep.findByUserSeq(userSeq);
             if (user == null) {
@@ -280,8 +280,8 @@ public class MyPageServiceImpl implements  MyPageService {
                             .body("공개여부 설정을 변경할 수 있는 권한이 없습니다.");
                 }
 
-                if(isPrivate) user.setIsPrivate(1); //공개 설정
-                else user.setIsPrivate(0); //비공개 설정
+                if(onlyMe) user.setOnlyMe(1); //공개 설정
+                else user.setOnlyMe(0); //비공개 설정
 
                 userRep.save(user);
                 return ResponseEntity.ok().body("공개 설정 변경에 성공했습니다.");
