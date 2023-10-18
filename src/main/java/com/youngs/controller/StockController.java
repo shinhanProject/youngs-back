@@ -73,4 +73,21 @@ public class StockController {
         }
     }
 
+    /**
+     * 등락률 기준 오늘의 종목 데이터 가져오기
+     * @return 오늘의 종목 데이터 3개
+     */
+    @GetMapping("/today-stock")
+    public ResponseEntity<?> getTodayStocks() {
+        try {
+            List<Map<String, Object>> result = stockService.getTodayStock();
+            return ResponseEntity.ok().body(result);
+        } catch (Exception e) {
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
+    }
+
 }
