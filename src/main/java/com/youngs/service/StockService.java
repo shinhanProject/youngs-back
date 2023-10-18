@@ -96,10 +96,6 @@ public class StockService {
             return Double.compare(rate2, rate1);
         });
 
-        // 결과 출력
-        for (Map<String, Object> data : dataList) {
-            System.out.println(data);
-        }
         return dataList.subList(0, 3);
     }
 }
