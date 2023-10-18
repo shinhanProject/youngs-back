@@ -30,7 +30,8 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.youngs"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .ignoredParameterTypes(AuthenticationPrincipal.class); // @AuthenticationPrincipal의 파라미터 요구 필드를 없앤다.
     }
 
     private ApiKey apiKey() {
