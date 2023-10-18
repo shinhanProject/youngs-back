@@ -48,8 +48,8 @@ public class User {
     @Column(name = "tier", nullable = false)
     private String tier; // 사용자 티어
 
-    @Column(name = "is_private", nullable = false)
-    private int isPrivate; // 사용자 요약 정보 공개 여부
+    @Column(name = "only_me", nullable = false)
+    private int onlyMe; // 사용자 요약 정보 공개 여부
 
     @Column(name = "refresh_token")
     private String refreshToken; // 사용자 Refresh Token
