@@ -30,9 +30,11 @@ public class WebSecurityConfig {
                 .sessionManagement() // session 기반이 아님을 선언
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests() // /, /auth/**, /profile/**, /word/**, /news/**, /basic/**, /today-stock/**, /rank/** 경로는 인증 안 해도 된다.
-                    .antMatchers("/", "/auth/**", "/profile/**", "/word/**", "/news/**", "/basic/**", "/today-stock/**", "/rank/**", "/stock/**").permitAll()
-                .anyRequest() // /와 /auth/**, /profile/**, /word/**, /news/**, /basic/**, /today-stock/**, /rank/** 이외의 모든 경로는 인증해야 된다.
+                .authorizeRequests() // /, /auth/**, /profile/**, /word/**, /news/**, /basic/**, /today-stock/**, /rank/**, /stock/** 경로는 인증 안 해도 된다.
+                    .antMatchers("/", "/auth/**", "/profile/**", "/word/**", "/news/**", "/basic/**", "/today-stock/**", "/rank/**", "/stock/**",
+                            "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
+                            "/api/v3/**", "/swagger-resources/**", "/webjars/**").permitAll()
+                .anyRequest() // /와 /auth/**, /profile/**, /word/**, /news/**, /basic/**, /today-stock/**, /rank/**, /stock/** 이외의 모든 경로는 인증해야 된다.
                     .authenticated()
                 .and()
                     .anonymous() // "ROLE_ANONYMOUS" 권한을 로그인하지 않은 사용자에게 자동으로 할당
