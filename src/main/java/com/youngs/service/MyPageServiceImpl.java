@@ -57,7 +57,7 @@ public class MyPageServiceImpl implements  MyPageService {
         } else { // 로그인한 사용자가 없을 경우
             status = 1;
         }
-        userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, user.getIsPrivate(), status);
+        userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, (user.getIsPrivate() == 1), status); //1일때 true, 0일 때 false
         return userProfile;
     }
 
@@ -265,7 +265,7 @@ public class MyPageServiceImpl implements  MyPageService {
      * @return 요약 정보 공개 옵션 변경
      * */
     @Override
-    public ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, int isPrivate){
+    public ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, boolean isPrivate){
         try{
             User user = userRep.findByUserSeq(userSeq);
             if (user == null) {
@@ -279,11 +279,9 @@ public class MyPageServiceImpl implements  MyPageService {
                             .status(HttpStatus.UNAUTHORIZED) // 401 Error
                             .body("공개여부 설정을 변경할 수 있는 권한이 없습니다.");
                 }
-                if(isPrivate!=0 && isPrivate != 1) {
-                    throw new RuntimeException("잘못된 요청입니다.");
-                }
-                if(isPrivate==0) user.setIsPrivate(0); //공개 설정
-                else user.setIsPrivate(1); //비공개 설정
+
+                if(isPrivate) user.setIsPrivate(1); //공개 설정
+                else user.setIsPrivate(0); //비공개 설정
 
                 userRep.save(user);
                 return ResponseEntity.ok().body("공개 설정 변경에 성공했습니다.");
