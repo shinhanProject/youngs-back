@@ -17,3 +17,7 @@ spring:
         format_sql: true
         ddl-auto: none
         generate-ddl: false
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
