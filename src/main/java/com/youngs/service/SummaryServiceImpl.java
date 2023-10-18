@@ -53,7 +53,6 @@ public class SummaryServiceImpl implements SummaryService {
                 summaryDTO = SummaryDTO.builder()
                                 .summarySeq(basicSummary.getSummarySeq())
                                 .context(basicSummary.getContext())
-                                .wasWritten(true)
                                 .build();
             }
             else if (category.equals("news")) { // 조회할 요약의 카테고리가 '보도자료'일 경우
@@ -65,7 +64,6 @@ public class SummaryServiceImpl implements SummaryService {
                 summaryDTO = SummaryDTO.builder()
                         .summarySeq(newsSummary.getSummarySeq())
                         .context(newsSummary.getContext())
-                        .wasWritten(true)
                         .build();
             }
             else { // 요약을 조회할 수 있는 카테고리의 글이 아닐 경우
