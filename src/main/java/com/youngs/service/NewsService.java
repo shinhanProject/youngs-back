@@ -1,7 +1,8 @@
 package com.youngs.service;
 
 import com.youngs.dto.NewsArticleDTO;
-import com.youngs.entity.NewsArticle;
+import com.youngs.security.PrincipalUserDetails;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -16,6 +17,10 @@ public interface NewsService {
 
     /**
      * 세부 보도자료 조회
+     * @author 이지은
+     * @param currentUserDetails : 현재 로그인한 사용자 정보
+     * @param categorySeq        : 조회할 사용자 고유 번호
+     * @param newsSeq            : 세부 보도자료 인덱스
      * */
-    NewsArticle getByArticle(Long categorySeq, Long newsSeq);
+    ResponseEntity<?> getByArticle(PrincipalUserDetails currentUserDetails, Long categorySeq, Long newsSeq);
 }

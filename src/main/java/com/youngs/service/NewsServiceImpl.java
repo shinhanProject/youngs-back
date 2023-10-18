@@ -1,9 +1,14 @@
 package com.youngs.service;
 
 import com.youngs.dto.NewsArticleDTO;
+import com.youngs.dto.ResponseDTO;
 import com.youngs.entity.NewsArticle;
+import com.youngs.entity.NewsSummary;
 import com.youngs.repository.NewsRepository;
+import com.youngs.repository.NewsSummaryRepository;
+import com.youngs.security.PrincipalUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +21,7 @@ import java.util.List;
 @Transactional
 public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRep;
+    private final NewsSummaryRepository newsSummaryRep;
 
     /**
      * 카테고리에 해당하는 보도자료 조회
@@ -47,11 +53,27 @@ public class NewsServiceImpl implements NewsService {
      * @exception RuntimeException 가져온 보도자료가 없다면 throw
      * @return 카테고리와 보조자료인덱스에 해당하는 보도자료
      * */
-    public NewsArticle getByArticle(Long categorySeq, Long newsSeq) throws RuntimeException {
-        NewsArticle article =  newsRep.findByNewsCategoryCategorySeqAndNewsSeq(categorySeq, newsSeq);
-        if(article == null){ //가져온 보도자료가 없다면
-            throw new RuntimeException("조회할 보도자료가 없습니다");
+    public ResponseEntity<?> getByArticle(PrincipalUserDetails currentUserDetails, Long categorySeq, Long newsSeq) throws RuntimeException {
+        try{
+            NewsArticle article =  newsRep.findByNewsCategoryCategorySeqAndNewsSeq(categorySeq, newsSeq);
+            if(article == null){ //가져온 보도자료가 없다면
+                throw new RuntimeException("조회할 보도자료가 없습니다");
+            }
+
+            boolean wasWritten = false; //초기 false
+            if(currentUserDetails != null){ //로그인한 사용자일 때
+                Long currentUserSeq = currentUserDetails.getUserSeq(); //로그인한 사용자 고유 번호
+                NewsSummary newsSummary = newsSummaryRep.findByUserUserSeqAndNewsArticleNewsSeq(currentUserSeq, newsSeq);
+                wasWritten = (newsSummary != null); // true : 이미 요약된 기록 존재, false: 요약된 적이 없음
+            }
+            String pubDate = article.getPubDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            NewsArticleDTO newsArticleDTO = new NewsArticleDTO(article.getNewsSeq(), article.getTitle(), article.getUrl(), pubDate, wasWritten);
+            return ResponseEntity.ok().body(newsArticleDTO);
+        } catch (Exception e){
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity
+                    .internalServerError() // 500
+                    .body(responseDTO);
         }
-        return article;
     }
 }
