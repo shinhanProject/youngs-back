@@ -13,5 +13,6 @@ public class BasicArticleDTO {
     private Long basicSeq; //세부 기초지식 인덱스
     private String subject; //용어 또는 제목
     private String information; // 기초지식 설명 또는 파일명 or 기초지식  내용 요약
+    private boolean wasWritten; // 요약 작성 여부
 }
 
