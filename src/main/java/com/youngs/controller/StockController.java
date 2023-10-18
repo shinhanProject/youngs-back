@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,7 +63,7 @@ public class StockController {
     @GetMapping()
     public ResponseEntity<?> getStocks() {
         try {
-            List<ArrayList<String>> result = stockService.getStocks();
+            List<Map<String, Object>> result = stockService.getStocks();
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
             ResponseDTO<Object> responseDTO = ResponseDTO.builder().message(e.getMessage()).build();
