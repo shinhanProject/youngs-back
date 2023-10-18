@@ -47,13 +47,21 @@ public class StockController {
     /**
      * 주식 재무제표 데이터 가져오기
      *
-     * @param name 데이터를 가져올 종목 이름
+     * @param corp_code 데이터를 가져올 종목 code
      * @return 재무제표 데이터 전달
      * @author 김태우
      */
-    @GetMapping("/stat/{name}")
-    public ResponseEntity<Object> getFnStatements(@PathVariable(value = "name") String name) {
-        return null;
+    @GetMapping("/stat/{corp_code}")
+    public ResponseEntity<Object> getFnStatements(@PathVariable(value = "corp_code") String corp_code) {
+        try { // 정상 결과
+            Map<String, Object> ChartData = stockService.getStockStat(corp_code);
+            return ResponseEntity.ok().body(ChartData);
+        } catch (Exception e) { // S3 정보 없음을 제외한 오류
+            ResponseDTO<Object> responseDTO = ResponseDTO.builder().message("일치하는 정보 없음.").build();
+            return ResponseEntity
+                    .internalServerError()
+                    .body(responseDTO);
+        }
     }
 
     /**
