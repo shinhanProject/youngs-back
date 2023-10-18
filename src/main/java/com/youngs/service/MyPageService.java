@@ -76,6 +76,6 @@ public interface MyPageService {
      * @param isPrivate          : 공개여부 - 0: 공개 1: 비공개
      * @author 이지은
      * */
-    ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, int isPrivate);
+    ResponseEntity<?> changeIsPrivate(PrincipalUserDetails currentUserDetails, Long userSeq, boolean isPrivate);
 
 }

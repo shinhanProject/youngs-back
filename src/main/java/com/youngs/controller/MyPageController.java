@@ -142,8 +142,8 @@ public class MyPageController {
      * @return 사용자 요약 정보 리스트
      * */
     @PatchMapping("/{userSeq}/private")
-    public ResponseEntity<?> changeIsPrivate(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @PathVariable Long userSeq, @RequestBody Map<String, Integer> request){
-        int isPrivate = request.get("isPrivate");
+    public ResponseEntity<?> changeIsPrivate(@AuthenticationPrincipal PrincipalUserDetails currentUserDetails, @PathVariable Long userSeq, @RequestBody Map<String, Boolean> request){
+        boolean isPrivate = request.get("isPrivate");
         return myPageService.changeIsPrivate(currentUserDetails, userSeq, isPrivate);
     }
 }
