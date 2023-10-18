@@ -57,7 +57,7 @@ public class MyPageServiceImpl implements  MyPageService {
         } else { // 로그인한 사용자가 없을 경우
             status = 1;
         }
-        userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, status);
+        userProfile = new UserProfileDTO(user.getNickname(), user.getProfile(), user.getTier(), count, user.getIsPrivate(), status);
         return userProfile;
     }
 
