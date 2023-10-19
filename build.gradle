@@ -30,6 +30,12 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -44,8 +50,15 @@ dependencies {
 	// MySQL
 	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
+	// AWS S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// Swagger
+	implementation("io.springfox:springfox-boot-starter:3.0.0")
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
