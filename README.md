@@ -34,7 +34,7 @@
       <td> - 인프라<br> - 데이터 수집<br> - 종목 정보 개발 </td>
       <td> - DB 설계<br> - 회원가입<br> - 사용자 인및 인가 <br> - 프로필<br> - 요약 </td>
       <td> - DB 설계<br> - 단어 검색<br> - 기초 정보 및 뉴스<br> - 마이페이지<br> - 랭킹 및 티어 </td>
-      <td> - 프론트엔드 총괄<br> - UI/UX 디자인<br> - 마이페이지<br>  - chatGPT<br> - 요약 </td>
+      <td> - 프론트엔드 총괄<br> - UI/UX 디자인<br>  - Auth<br>  - chatGPT<br> - 마이페이지<br> - 요약 </td>
       <td> - UI/UX 디자인<br> - 종목 정보<br> - 요약 </td>
     </tr>
   </tbody>
@@ -106,7 +106,8 @@
 - 이메일 형식의 아이디와 비밀번호를 통해 로그인을 진행한다.
 - 회원가입 시, 이메일 중복 체크 등 유효성 검사 진행한다. <br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/347d76a2-85f6-467c-a218-db3968172813)
+![로그인](https://github.com/shinhanProject/youngs-back/assets/44528897/ce4d7a7a-5861-4a33-b64c-848c39c7aa7e)
+
 
 <br>
 
@@ -114,7 +115,7 @@
 - 주식 기초, 주식 투자 기법, 위험성, 경제 기초 지식 카테고리 별 학습 할 수 있다.
 - 이미 요약 작성을 한 기록이 있다면, ‘학습한 내용 포함하지 않기’ 버튼을 통해 OFF 처리가 가능하다.  <br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/547d2d7c-3560-4ce6-bf40-e3e6b3905683)
+![기초 지식](https://github.com/shinhanProject/youngs-back/assets/44528897/91610596-0020-425c-8899-597547b0f731)
 
 <br>
 
@@ -124,7 +125,7 @@
 - 보도자료와 종목정보 탭에서 GPT 검색기능활성화하기 ON 하고, 검색하고 싶은 텍스트를 드래그 하면 GPT 검색이 가능하다.
 - 사용자가 많이 조회한 단어라면, 정보를 빠르게 전달하기 위해 DB에 저장된 데이터를 전달한다. <br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/ee320e62-173e-45c5-9dff-09817dea01a0)
+![gpt](https://github.com/shinhanProject/youngs-back/assets/44528897/0ed45442-6fca-4be6-97df-099b67a22e9a)
 
 <br>
 
@@ -133,14 +134,14 @@
 - 종목 선택 시, 해당 종목의 상세 내역 조회 할 수 있다.
     - 주가 그래프 및 시가총액, 자산계, 매출액, 당기순이익 등 종목의 상세 내역 조회<br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/5808a442-758c-49b5-8d63-35facf8dd402)
+![종목정보](https://github.com/shinhanProject/youngs-back/assets/44528897/d632696e-9d19-4830-8e44-e37ec3770257)
 
 <br>
 
 ### 4. 프로필 수정
 - 설정 버튼 클릭 시, 사용자의 프로필 이미지 및 닉네임 변경 할 수 있다. <br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/884f4388-c11d-40ae-8c2f-8052f8c9319c)
+![프로필 수정](https://github.com/shinhanProject/youngs-back/assets/44528897/777e2e37-d518-43f9-b566-30824345fa40)
 
 <br>
 
@@ -149,7 +150,7 @@
     - 하루에 요약 작성을 많이 할 수록, 기록된 색이 진해진다.
 - 요약 맵에 마우스 오버시, 해당 요약을 작성한 날짜와 요약 개수를 조회 할 수 있다. <br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/37671a1f-7856-4873-8b90-56275063d0f6)
+![요약개수확인](https://github.com/shinhanProject/youngs-back/assets/44528897/b2af8c78-21ba-4fbd-bf70-a571c92d9970)
 
 <br>
 
@@ -158,14 +159,14 @@
 - ‘요약하기’ 버튼을 클릭 시, 사용자가 작성한 요약을 마이페이지에서 조회 할 수 있으며 
 만약 처음 작성하는 요약이라면 요약 맵에 해당 일자의 요약 개수가 +1 된다.
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/00edc84e-2c8a-4242-b55d-a7aff0656525)
+![뉴스요약](https://github.com/shinhanProject/youngs-back/assets/44528897/24449561-9893-446b-9c5b-95cb963fc6c2)
 
 <br>
 
 ### 7. 요약 수정
 - 마이페이지에서 작성된 요약을 선택 시, 요약 작성 페이지로 이동하며 이동된 페이지에서 요약 수정 작성이 가능하다. <br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/01aefeb7-d12e-4f33-81ff-2a77f90acee8)
+![요약수정](https://github.com/shinhanProject/youngs-back/assets/44528897/74e7c01c-2a06-436a-b2d1-1feef85405db)
 
 <br>
 
@@ -175,8 +176,7 @@
 - ‘보러가기’ 버튼 클릭 시, 해당 사용자의 마이페이지로 이동한다.
     - 만약 요약 작성이 비공개일시, 본인 외의 사용자에게는 숨김처리 된다.<br>
 
-![image](https://github.com/shinhanProject/youngs-back/assets/44528897/b077788c-7847-4144-9495-1f781d51244c)
-
+![랭킹](https://github.com/shinhanProject/youngs-back/assets/44528897/8f7e4278-e930-4a22-8fdd-2744ad9091f2)
 
 <br><br>
 
